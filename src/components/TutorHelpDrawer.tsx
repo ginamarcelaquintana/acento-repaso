@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Send, Volume2, X } from 'lucide-react';
+import { MessageCircle, Send, Volume2, X } from 'lucide-react';
 import type { Question, Topic } from '@/types/curriculum';
 import { voiceEngine } from '@/lib/voice-engine';
 
@@ -109,11 +109,12 @@ export function TutorHelpDrawer({
       >
         <div className="flex items-center justify-between border-b border-[#ECE5D8] bg-white px-5 py-4">
           <div className="flex items-center gap-3">
-            <img
-              src="/images/tutor-valeria.jpg"
-              alt="Tutoría"
-              className="h-11 w-11 rounded-2xl object-cover ring-2 ring-[#D94646]/25"
-            />
+            <div
+              aria-hidden="true"
+              className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#FEF2F2] ring-2 ring-[#D94646]/20"
+            >
+              <MessageCircle className="h-5 w-5 text-[#D94646]" />
+            </div>
             <div>
               <h2 className="font-display text-base font-extrabold text-[#1E293B]">
                 Tutoría

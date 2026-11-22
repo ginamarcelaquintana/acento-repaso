@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { MessageCircle, Sparkles, Volume2 } from 'lucide-react';
 import { PointingHandCue } from './EditorialIllustrations';
 
 export type TutorMood = 'neutral' | 'praise' | 'coaching' | 'celebration';
@@ -30,17 +31,24 @@ export function TutorBubble({
       className={`relative flex items-center gap-3.5 rounded-3xl border p-4 transition-all sm:gap-4 ${toneClasses}`}
     >
       <div className="relative shrink-0">
-        <img
-          src="/images/tutor-valeria.jpg"
-          alt="Tutoría"
-          className={`h-13 w-13 rounded-2xl object-cover shadow-sm ring-2 ${
+        <div
+          aria-hidden="true"
+          className={`flex h-12 w-12 items-center justify-center rounded-2xl shadow-2xs ring-2 ${
             mood === 'coaching'
-              ? 'ring-[#F59E0B]'
+              ? 'bg-[#FEF3C7] text-[#D97706] ring-[#F59E0B]/50'
               : mood === 'praise' || mood === 'celebration'
-                ? 'ring-[#059669]'
-                : 'ring-[#D94646]/25'
+                ? 'bg-[#D1FAE5] text-[#059669] ring-[#059669]/35'
+                : 'bg-[#FEF2F2] text-[#D94646] ring-[#D94646]/25'
           }`}
-        />
+        >
+          {isSpeaking ? (
+            <Volume2 className="h-5 w-5" />
+          ) : mood === 'praise' || mood === 'celebration' ? (
+            <Sparkles className="h-5 w-5" />
+          ) : (
+            <MessageCircle className="h-5 w-5" />
+          )}
+        </div>
         {isSpeaking && (
           <span
             aria-label="Hablando"

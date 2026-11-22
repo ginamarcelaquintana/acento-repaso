@@ -49,6 +49,13 @@ interface RepasoSessionProps {
 
 type QuestionStage = 'answering' | 'coaching' | 'solved';
 
+function normalizeForComparison(value: string): string {
+  return value
+    .replace(/[’‘]/g, "'")
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 interface BrowserSpeechRecognition {
   lang: string;
   interimResults: boolean;
@@ -138,13 +145,26 @@ export function RepasoSession({
     });
 
     if (!progress.voiceMuted) {
+      const firstQ = questions[0];
       voiceEngine.speak({
         text: intro.speakText,
         mode: intro.voiceMode,
         targetLang: topic.language,
         muted: progress.voiceMuted,
         onStart: () => setIsSpeaking(true),
-        onEnd: () => setIsSpeaking(false),
+        onEnd: () => {
+          setIsSpeaking(false);
+          if (firstQ?.type === 'listen') {
+            voiceEngine.speak({
+              text: firstQ.audioText,
+              mode: targetVoiceMode,
+              targetLang: topic.language,
+              muted: false,
+              onStart: () => setIsSpeaking(true),
+              onEnd: () => setIsSpeaking(false),
+            });
+          }
+        },
       });
     }
 
@@ -228,6 +248,9 @@ export function RepasoSession({
     if (attempts === 0) {
       setAttempts(1);
       setStage('coaching');
+      if (currentQuestion.type === 'order') {
+        setOrderSelectedIndices([]);
+      }
       setComboStreak(0);
       setTutorMood('coaching');
       const coach = coachingDeckRef.current.next();
@@ -263,7 +286,10 @@ export function RepasoSession({
       return;
     }
     setSelectedFill(word);
-    evaluateAnswer(word === currentQuestion.answer);
+    evaluateAnswer(
+      normalizeForComparison(word) ===
+        normalizeForComparison(currentQuestion.answer)
+    );
   };
 
   const handleCheckOrder = () => {
@@ -274,7 +300,10 @@ export function RepasoSession({
       .map((i) => currentQuestion.words[i])
       .join(' ')
       .trim();
-    evaluateAnswer(built === currentQuestion.correctSentence);
+    evaluateAnswer(
+      normalizeForComparison(built) ===
+        normalizeForComparison(currentQuestion.correctSentence)
+    );
   };
 
   const handleManualHint = () => {
@@ -403,12 +432,8 @@ export function RepasoSession({
     return (
       <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
         <div className="rounded-[32px] border border-[#ECE5D8] bg-white p-6 text-center shadow-sm sm:p-10 animate-soft-pop">
-          <div className="mx-auto flex h-24 w-24 items-center justify-center overflow-hidden rounded-3xl ring-4 ring-[#ECFDF5]">
-            <img
-              src="/images/tutor-valeria.jpg"
-              alt="Sesión completada"
-              className="h-full w-full object-cover"
-            />
+          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-[#ECFDF5] ring-4 ring-[#ECFDF5]/60">
+            <CheckCircle2 className="h-11 w-11 text-[#059669]" />
           </div>
           <span className="mt-4 inline-block rounded-full bg-[#ECFDF5] px-3 py-1 text-xs font-bold text-[#059669]">
             Sesión completada

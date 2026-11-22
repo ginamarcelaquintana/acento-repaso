@@ -15,7 +15,7 @@ interface SpeechSegment {
   lang: 'es-CO' | 'en-US' | 'fr-FR';
 }
 
-const FALLBACK_COOLDOWN_MS = 5 * 60 * 1000;
+const FALLBACK_COOLDOWN_MS = 3000;
 
 export function sanitizeForSpeech(raw: string, targetLang?: Language): string {
   const targetTag = targetLang === 'fr' ? 'fr' : 'en';
@@ -287,14 +287,6 @@ class VoiceEngineController {
     this.activeCallbacks = { onStart: options.onStart, onEnd: options.onEnd };
 
     const slow = Boolean(options.slow);
-    const cleanedForApi = stripTagsAndQuotes(
-      sanitizeForSpeech(options.text, options.targetLang)
-    );
-    if (!cleanedForApi) {
-      options.onEnd?.();
-      return;
-    }
-
     const effectiveMode: VoiceMode =
       options.mode === 'es-CO' && options.targetLang
         ? options.targetLang === 'fr'
@@ -302,7 +294,23 @@ class VoiceEngineController {
           : 'mixed-en'
         : options.mode;
 
-    const cacheKey = `${effectiveMode}:${slow ? 's' : 'n'}:${cleanedForApi}`;
+    const segmentedForApi = autoSegmentBilingualText(
+      sanitizeForSpeech(options.text, options.targetLang),
+      effectiveMode,
+      options.targetLang
+    );
+    const strippedCheck = stripTagsAndQuotes(segmentedForApi);
+    if (!strippedCheck) {
+      options.onEnd?.();
+      return;
+    }
+
+    const payloadText =
+      segmentedForApi.length <= 680
+        ? segmentedForApi
+        : strippedCheck.slice(0, 680);
+
+    const cacheKey = `${effectiveMode}:${slow ? 's' : 'n'}:${payloadText}`;
     const cachedUrl = this.blobCache.get(cacheKey);
 
     if (cachedUrl) {
@@ -320,7 +328,7 @@ class VoiceEngineController {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            text: cleanedForApi.slice(0, 420),
+            text: payloadText,
             mode: effectiveMode,
             slow,
           }),
@@ -329,7 +337,8 @@ class VoiceEngineController {
 
         if (runId !== this.activeRunId) return;
 
-        if (res.ok) {
+        const contentType = res.headers.get('content-type') ?? '';
+        if (res.ok && contentType.includes('audio/')) {
           const blob = await res.blob();
           if (blob.size > 0 && runId === this.activeRunId) {
             const url = URL.createObjectURL(blob);
@@ -337,7 +346,7 @@ class VoiceEngineController {
             await this.playAudioUrl(url, runId, options);
             return;
           }
-        } else {
+        } else if (!res.ok) {
           this.apiCooldownUntil = Date.now() + FALLBACK_COOLDOWN_MS;
         }
       } catch (err) {
@@ -367,6 +376,7 @@ class VoiceEngineController {
     if (runId !== this.activeRunId) return;
 
     const audio = new Audio(url);
+    audio.playbackRate = options.slow ? 0.85 : 1.0;
     this.currentAudio = audio;
     this.speaking = true;
     options.onStart?.();
@@ -398,8 +408,11 @@ class VoiceEngineController {
 
     try {
       await audio.play();
-    } catch {
-      if (runId === this.activeRunId) {
+    } catch (err) {
+      finish();
+      const isAutoplayBlocked =
+        (err as { name?: string })?.name === 'NotAllowedError';
+      if (!isAutoplayBlocked && runId === this.activeRunId) {
         this.speakWithBrowser(
           options.text,
           options.mode,

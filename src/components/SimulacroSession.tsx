@@ -38,6 +38,13 @@ interface SimulacroSessionProps {
   onReviewMistakes: (missedQuestions: SimulacroItem[]) => void;
 }
 
+function normalizeForComparison(value: string): string {
+  return value
+    .replace(/[’‘]/g, "'")
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 function buildQuestionPool(
   allTopics: Topic[],
   config: SimulacroConfig
@@ -158,13 +165,17 @@ export function SimulacroSession({
       userLabel = q.options[choiceIdx ?? 0] ?? '';
       correctLabel = q.options[q.correctIndex] ?? '';
     } else if (q.type === 'fill') {
-      isCorrect = fillWord === q.answer;
+      isCorrect =
+        normalizeForComparison(fillWord ?? '') ===
+        normalizeForComparison(q.answer);
       userLabel = fillWord ?? '';
       correctLabel = q.answer;
     } else if (q.type === 'order') {
       userLabel = orderIndices.map((i) => q.words[i]).join(' ').trim();
       correctLabel = q.correctSentence;
-      isCorrect = userLabel === correctLabel;
+      isCorrect =
+        normalizeForComparison(userLabel) ===
+        normalizeForComparison(correctLabel);
     }
 
     const updatedRecords = [
@@ -466,6 +477,7 @@ export function SimulacroSession({
                     voiceEngine.speak({
                       text: q.audioText,
                       mode: isEn ? 'en' : 'fr',
+                      targetLang: currentItem.topic.language,
                       slow: progress.voiceSlow,
                       muted: false,
                     })
