@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+:root {
+  --background: #faf7f2;
+  --foreground: #1e293b;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans), system-ui, -apple-system, sans-serif;
+  --font-display: var(--font-display), var(--font-sans), system-ui, sans-serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, .font-display {
+  font-family: var(--font-display);
+}
+
+@keyframes point-nudge {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(7px);
+  }
+}
+
+@keyframes voice-bar {
+  0%, 100% {
+    transform: scaleY(0.38);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes soft-pop {
+  0% {
+    transform: scale(0.96);
+    opacity: 0.5;
+  }
+  65% {
+    transform: scale(1.015);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-point-nudge {
+  animation: point-nudge 1.05s ease-in-out infinite;
+}
+
+.animate-voice-bar-1 {
+  animation: voice-bar 0.75s ease-in-out infinite;
+}
+.animate-voice-bar-2 {
+  animation: voice-bar 0.75s ease-in-out 0.18s infinite;
+}
+.animate-voice-bar-3 {
+  animation: voice-bar 0.75s ease-in-out 0.34s infinite;
+}
+
+.animate-soft-pop {
+  animation: soft-pop 0.32s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Tactile 3D Flashcard Flip */
+.card-perspective {
+  perspective: 1100px;
+}
+
+.card-inner {
+  transform-style: preserve-3d;
+  transition: transform 0.52s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.card-inner.is-flipped {
+  transform: rotateY(180deg);
+}
+
+.card-face {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.card-face-back {
+  transform: rotateY(180deg);
+}
