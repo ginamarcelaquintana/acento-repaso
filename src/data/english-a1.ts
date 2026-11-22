@@ -1,4 +1,4 @@
-import type { Topic } from '@/types/curriculum';
+﻿import type { Topic } from '@/types/curriculum';
 
 export const ENGLISH_A1_TOPICS: Topic[] = [
   {
@@ -88,7 +88,7 @@ export const ENGLISH_A1_TOPICS: Topic[] = [
         id: 'en-a1-gr-q4',
         type: 'listen',
         difficulty: 1,
-        promptEs: 'Escucha a Valeria y elige la despedida que pronunció.',
+        promptEs: 'Escucha el audio y elige la despedida que pronunció.',
         audioText: 'Have a great afternoon! See you tomorrow.',
         options: [
           'Good morning! How are you?',
@@ -558,7 +558,7 @@ export const ENGLISH_A1_TOPICS: Topic[] = [
         id: 'en-a1-ps-q5',
         type: 'listen',
         difficulty: 2,
-        promptEs: 'Escucha a Valeria y elige el horario real que menciona.',
+        promptEs: 'Escucha el audio y elige el horario real que menciona.',
         audioText: 'We always practice on Tuesdays and Thursdays at eight.',
         options: [
           'Martes y jueves a las 8.',
@@ -705,7 +705,7 @@ export const ENGLISH_A1_TOPICS: Topic[] = [
         id: 'en-a1-th-q5',
         type: 'listen',
         difficulty: 2,
-        promptEs: 'Escucha dónde dejó Valeria el marcador.',
+        promptEs: 'Escucha dónde quedó el marcador.',
         audioText: 'The red marker is not on the desk; it is under your notebook.',
         options: [
           'Encima del escritorio.',
@@ -1146,7 +1146,7 @@ export const ENGLISH_A1_TOPICS: Topic[] = [
         id: 'en-a1-wh-q5',
         type: 'listen',
         difficulty: 2,
-        promptEs: 'Escucha a Valeria y responde qué SÍ sabe hacer Sara.',
+        promptEs: 'Escucha el audio y responde qué SÍ sabe hacer Sara.',
         audioText: 'Sara can play the piano well, but she cannot sing.',
         options: [
           'Cantar ópera.',

@@ -13,27 +13,33 @@ function buildVoiceInstructions(
   slow: boolean
 ): string {
   const basePersona =
-    'Speak as Valeria, a warm, encouraging, articulate young Colombian university language tutor (female voice). Maintain a consistent, natural, clear vocal tone with zero robotic cadence.';
+    'Speak as a warm, encouraging, articulate young Colombian university language tutor (female voice). Sound completely human, conversational, and calm. Never read punctuation, hyphens, or symbols aloud.';
   const paceNote = slow
-    ? 'Speak noticeably slowly and clearly (around 0.8x speed), articulating every syllable carefully for a beginner student.'
-    : 'Speak at a natural, friendly, clear conversational pace.';
+    ? 'Speak noticeably slowly and clearly (around 0.8x speed), articulating every syllable carefully.'
+    : 'Speak at a natural, friendly, conversational pace.';
 
   switch (mode) {
     case 'es-CO':
-      return `${basePersona} Speak in natural, educated, neutral Colombian Spanish (warm Bogotá / Andean accent, never overly slangy). ${paceNote}`;
+      return `${basePersona} Speak in natural, educated, neutral Colombian Spanish (warm Bogotá accent). ${paceNote}`;
     case 'en':
-      return `${basePersona} Speak in natural, clear standard North American English with crisp pronunciation for a beginner learner. ${paceNote}`;
+      return `${basePersona} Speak in natural, clear standard North American English with crisp native pronunciation. ${paceNote}`;
     case 'fr':
-      return `${basePersona} Speak in natural, clear standard French (neutral Parisian cadence, accurate liaisons and nasal vowels) for a beginner learner. ${paceNote}`;
+      return `${basePersona} Speak in natural, clear standard French (neutral Parisian cadence, accurate liaisons and nasal vowels). ${paceNote}`;
     case 'mixed-en':
-      return `${basePersona} Code-switch seamlessly in the same female voice: pronounce English phrases in crisp North American English and Spanish phrases in educated warm Colombian Spanish. ${paceNote}`;
+      return `${basePersona} Code-switch seamlessly in the exact same female voice: pronounce English phrases in natural North American English and Spanish phrases in warm Colombian Spanish. ${paceNote}`;
     case 'mixed-fr':
-      return `${basePersona} Code-switch seamlessly in the same female voice: pronounce French phrases in clear standard French and Spanish phrases in educated warm Colombian Spanish. ${paceNote}`;
+      return `${basePersona} Code-switch seamlessly in the exact same female voice: pronounce French phrases in natural standard French and Spanish phrases in warm Colombian Spanish. ${paceNote}`;
   }
 }
 
-function stripLanguageTags(rawText: string): string {
-  return rawText.replace(/\{(?:en|fr):([^}]+)\}/g, '$1').trim();
+function sanitizeTtsText(rawText: string): string {
+  return rawText
+    .replace(/\{(?:en|fr):([^}]+)\}/g, '$1')
+    .replace(/[—–·|«»[\]()✓✗]/g, ', ')
+    .replace(/\s+-\s+/g, ', ')
+    .replace(/_{2,}/g, ', ')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
 }
 
 export async function POST(req: Request) {
@@ -54,16 +60,7 @@ export async function POST(req: Request) {
 
     const { text, mode, slow } = parsed.data;
     modeForMetric = mode;
-    const cleanText = stripLanguageTags(text);
-
-    const hasGatewayAuth = Boolean(
-      process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN
-    );
-
-    if (!hasGatewayAuth) {
-      metric('tts.request', 1, { outcome: 'fallback_no_auth', mode });
-      return Response.json({ fallback: true }, { status: 503 });
-    }
+    const cleanText = sanitizeTtsText(text);
 
     const result = await generateSpeech({
       model: 'google/gemini-3.8-flash-lite-tts',
@@ -92,7 +89,10 @@ export async function POST(req: Request) {
       },
     });
   } catch (err) {
-    console.warn('[tts] falling back to browser speech:', err instanceof Error ? err.message : 'error');
+    console.warn(
+      '[tts] falling back to browser speech:',
+      err instanceof Error ? err.message : 'error'
+    );
     metric('tts.request', 1, { outcome: 'fallback_error', mode: modeForMetric });
     metric('tts.duration_ms', Math.round(performance.now() - startedAt), {
       mode: modeForMetric,

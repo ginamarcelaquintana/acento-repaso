@@ -5,7 +5,6 @@ import {
   ArrowLeft,
   ArrowRight,
   Check,
-  Gauge,
   RotateCcw,
   Volume2,
 } from 'lucide-react';
@@ -17,7 +16,6 @@ interface FlashcardDeckProps {
   topic: Topic;
   progress: UserProgress;
   onBack: () => void;
-  onToggleSlow: () => void;
   onMarkMastered: (cardId: string) => void;
   onStartRepaso: () => void;
 }
@@ -26,7 +24,6 @@ export function FlashcardDeck({
   topic,
   progress,
   onBack,
-  onToggleSlow,
   onMarkMastered,
   onStartRepaso,
 }: FlashcardDeckProps) {
@@ -45,11 +42,11 @@ export function FlashcardDeck({
     };
   }, [topic.slug]);
 
-  const speakCard = (text: string, slow?: boolean) => {
+  const speakCard = (text: string) => {
     voiceEngine.speak({
       text,
       mode: targetVoiceMode,
-      slow: slow ?? progress.voiceSlow,
+      targetLang: topic.language,
       muted: false,
       onStart: () => setIsSpeaking(true),
       onEnd: () => setIsSpeaking(false),
@@ -88,15 +85,11 @@ export function FlashcardDeck({
       </div>
 
       <TutorBubble
-        message="Toca la tarjeta para girarla, escucha la pronunciación natural y márcala cuando ya te la sepas."
+        message="Toca la tarjeta para girarla, oye la pronunciación y márcala cuando ya te la sepas."
         mood="neutral"
         isSpeaking={isSpeaking}
-        isSlow={progress.voiceSlow}
-        onReplay={() => speakCard(current.front)}
-        onToggleSlow={onToggleSlow}
       />
 
-      {/* 3D Flippable Card */}
       <div className="card-perspective mt-6">
         <div
           role="button"
@@ -112,7 +105,6 @@ export function FlashcardDeck({
             flipped ? 'is-flipped' : ''
           }`}
         >
-          {/* Front Face */}
           <div className="card-face absolute inset-0 flex flex-col justify-between rounded-[32px] border-2 border-[#ECE5D8] bg-white p-7 shadow-sm">
             <div className="flex items-center justify-between">
               <span
@@ -143,25 +135,14 @@ export function FlashcardDeck({
             </div>
 
             <div className="flex items-center justify-between">
-              <div
-                className="flex gap-2"
-                onClick={(e) => e.stopPropagation()}
-              >
+              <div onClick={(e) => e.stopPropagation()}>
                 <button
                   type="button"
-                  onClick={() => speakCard(current.front, false)}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-[#1E293B] px-3.5 py-2 text-xs font-bold text-white hover:bg-[#0F172A]"
+                  onClick={() => speakCard(current.front)}
+                  aria-label="Pronunciar"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#1E293B] text-white transition hover:bg-[#0F172A]"
                 >
-                  <Volume2 className="h-3.5 w-3.5" />
-                  Escuchar
-                </button>
-                <button
-                  type="button"
-                  onClick={() => speakCard(current.front, true)}
-                  className="inline-flex items-center gap-1 rounded-xl border border-[#E6DEC8] bg-[#FAF7F2] px-3 py-2 text-xs font-bold text-[#475569] hover:text-[#1E293B]"
-                >
-                  <Gauge className="h-3.5 w-3.5" />
-                  0.8x
+                  <Volume2 className="h-4 w-4" />
                 </button>
               </div>
               <span className="text-xs font-semibold text-[#94A3B8]">
@@ -170,7 +151,6 @@ export function FlashcardDeck({
             </div>
           </div>
 
-          {/* Back Face */}
           <div className="card-face card-face-back absolute inset-0 flex flex-col justify-between rounded-[32px] border-2 border-[#F59E0B]/50 bg-[#FFFBEB] p-7 shadow-sm">
             <span className="inline-block w-fit rounded-full bg-white px-3 py-1 text-xs font-bold text-[#B45309]">
               Significado y uso real
@@ -191,16 +171,16 @@ export function FlashcardDeck({
             </div>
 
             <div
-              className="flex justify-between items-center"
+              className="flex items-center justify-between"
               onClick={(e) => e.stopPropagation()}
             >
               <button
                 type="button"
                 onClick={() => speakCard(current.example)}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-[#D97706] px-3.5 py-2 text-xs font-bold text-white hover:bg-[#B45309]"
+                aria-label="Pronunciar ejemplo"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#D97706] text-white transition hover:bg-[#B45309]"
               >
-                <Volume2 className="h-3.5 w-3.5" />
-                Escuchar ejemplo
+                <Volume2 className="h-4 w-4" />
               </button>
               <span className="text-xs font-semibold text-[#92400E]">
                 Toca para volver ↻
@@ -210,7 +190,6 @@ export function FlashcardDeck({
         </div>
       </div>
 
-      {/* Controls */}
       <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
         <button
           type="button"

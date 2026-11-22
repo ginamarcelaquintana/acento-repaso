@@ -6,7 +6,7 @@ import type { Question, Topic } from '@/types/curriculum';
 import { voiceEngine } from '@/lib/voice-engine';
 
 interface TutorMessage {
-  role: 'student' | 'valeria';
+  role: 'student' | 'tutor';
   text: string;
   speakTarget?: string;
 }
@@ -15,7 +15,6 @@ interface TutorHelpDrawerProps {
   isOpen: boolean;
   topic: Topic;
   currentQuestion?: Question;
-  voiceSlow: boolean;
   onClose: () => void;
 }
 
@@ -23,15 +22,14 @@ export function TutorHelpDrawer({
   isOpen,
   topic,
   currentQuestion,
-  voiceSlow,
   onClose,
 }: TutorHelpDrawerProps) {
   const [doubt, setDoubt] = useState('');
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<TutorMessage[]>([
     {
-      role: 'valeria',
-      text: `¡Cuéntame! ¿Qué parte de "${topic.titleEs}" te tiene pensando? Te explico rápido y con un ejemplo claro.`,
+      role: 'tutor',
+      text: `Cuéntame, ¿qué duda tienes sobre "${topic.titleEs}"? Te lo explico en segundos con un ejemplo claro.`,
     },
   ]);
 
@@ -43,7 +41,7 @@ export function TutorHelpDrawer({
     '¿Cuál es la regla clave para no equivocarme?',
   ];
 
-  const askValeria = async (questionText: string) => {
+  const askTutor = async (questionText: string) => {
     const trimmed = questionText.trim();
     if (!trimmed || loading) return;
 
@@ -76,17 +74,17 @@ export function TutorHelpDrawer({
         data.reply ??
         currentQuestion?.explanationEs ??
         topic.microGuide[0]?.tip ??
-        'Revisa la pista que te marqué en la tarjeta.';
+        'Revisa la pista señalada en la tarjeta.';
 
       setMessages((prev) => [
         ...prev,
-        { role: 'valeria', text: replyText, speakTarget: data.speakTarget },
+        { role: 'tutor', text: replyText, speakTarget: data.speakTarget },
       ]);
 
       voiceEngine.speak({
         text: replyText,
         mode: 'es-CO',
-        slow: voiceSlow,
+        targetLang: topic.language,
         muted: false,
       });
     } catch {
@@ -94,7 +92,7 @@ export function TutorHelpDrawer({
         currentQuestion?.explanationEs ??
         topic.microGuide[0]?.tip ??
         'Fíjate en la concordancia entre el sujeto y el verbo.';
-      setMessages((prev) => [...prev, { role: 'valeria', text: fallbackText }]);
+      setMessages((prev) => [...prev, { role: 'tutor', text: fallbackText }]);
     } finally {
       setLoading(false);
     }
@@ -109,21 +107,19 @@ export function TutorHelpDrawer({
         className="flex h-full w-full max-w-md flex-col border-l border-[#ECE5D8] bg-[#FAF7F2] shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
         <div className="flex items-center justify-between border-b border-[#ECE5D8] bg-white px-5 py-4">
           <div className="flex items-center gap-3">
             <img
               src="/images/tutor-valeria.jpg"
-              alt="Profe Valeria"
+              alt="Tutoría"
               className="h-11 w-11 rounded-2xl object-cover ring-2 ring-[#D94646]/25"
             />
             <div>
               <h2 className="font-display text-base font-extrabold text-[#1E293B]">
-                Pregúntale a Valeria
+                Tutoría
               </h2>
               <p className="text-xs text-[#64748B]">
-                Tutora de {topic.language === 'en' ? 'Inglés' : 'Francés'} ·{' '}
-                {topic.level}
+                {topic.language === 'en' ? 'Inglés' : 'Francés'} · {topic.level}
               </p>
             </div>
           </div>
@@ -131,13 +127,12 @@ export function TutorHelpDrawer({
             type="button"
             onClick={onClose}
             className="rounded-full border border-[#E6DEC8] bg-[#FAF7F2] p-2 text-[#64748B] hover:text-[#1E293B]"
-            aria-label="Cerrar tutora"
+            aria-label="Cerrar tutoría"
           >
             <X className="h-4 w-4" />
           </button>
         </div>
 
-        {/* Conversation */}
         <div className="flex-1 space-y-3 overflow-y-auto p-5">
           {messages.map((msg, idx) => (
             <div
@@ -154,9 +149,10 @@ export function TutorHelpDrawer({
                 }`}
               >
                 <p>{msg.text}</p>
-                {msg.role === 'valeria' && (
+                {msg.role === 'tutor' && (
                   <button
                     type="button"
+                    aria-label="Reproducir explicación"
                     onClick={() =>
                       voiceEngine.speak({
                         text: msg.speakTarget ?? msg.text,
@@ -165,14 +161,13 @@ export function TutorHelpDrawer({
                             ? 'en'
                             : 'fr'
                           : 'es-CO',
-                        slow: voiceSlow,
+                        targetLang: topic.language,
                         muted: false,
                       })
                     }
-                    className="mt-2 inline-flex items-center gap-1 text-[11px] font-bold text-[#D94646] hover:underline"
+                    className="mt-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-[#FAF7F2] text-[#D94646] transition hover:bg-[#FEF2F2]"
                   >
-                    <Volume2 className="h-3 w-3" />
-                    Escuchar
+                    <Volume2 className="h-3.5 w-3.5" />
                   </button>
                 )}
               </div>
@@ -181,19 +176,18 @@ export function TutorHelpDrawer({
 
           {loading && (
             <div className="inline-block rounded-2xl border border-[#ECE5D8] bg-white px-4 py-2.5 text-xs font-semibold text-[#64748B]">
-              Valeria está preparando tu respuesta...
+              Preparando respuesta...
             </div>
           )}
         </div>
 
-        {/* Quick starter chips + input */}
         <div className="border-t border-[#ECE5D8] bg-white p-4">
           <div className="mb-3 flex flex-wrap gap-1.5">
             {starterChips.map((chip) => (
               <button
                 key={chip}
                 type="button"
-                onClick={() => askValeria(chip)}
+                onClick={() => askTutor(chip)}
                 className="rounded-full border border-[#E6DEC8] bg-[#FAF7F2] px-3 py-1.5 text-xs font-semibold text-[#334155] transition hover:border-[#D94646]/40 hover:bg-white"
               >
                 {chip}
@@ -204,7 +198,7 @@ export function TutorHelpDrawer({
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              askValeria(doubt);
+              askTutor(doubt);
             }}
             className="flex items-center gap-2"
           >

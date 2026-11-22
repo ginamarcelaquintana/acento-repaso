@@ -76,7 +76,7 @@ export function SimulacroSetup({
           <div className="sm:col-span-5">
             <img
               src="/images/mode-simulacro.jpg"
-              alt="Modo Simulacro de Acento"
+              alt="Modo Simulacro de Accento"
               className="mx-auto h-40 w-full rounded-2xl object-cover shadow-xs"
             />
           </div>

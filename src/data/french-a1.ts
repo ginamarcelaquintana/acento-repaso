@@ -1,4 +1,4 @@
-import type { Topic } from '@/types/curriculum';
+﻿import type { Topic } from '@/types/curriculum';
 
 export const FRENCH_A1_TOPICS: Topic[] = [
   {
@@ -88,7 +88,7 @@ export const FRENCH_A1_TOPICS: Topic[] = [
         id: 'fr-a1-sa-q4',
         type: 'listen',
         difficulty: 1,
-        promptEs: 'Escucha a Valeria en francés y selecciona lo que dijo.',
+        promptEs: 'Escucha el audio en francés y selecciona lo que dijo.',
         audioText: 'Merci beaucoup, bonne journée et à demain !',
         options: [
           'Muchas gracias, ¡feliz día y hasta mañana!',
@@ -248,7 +248,7 @@ export const FRENCH_A1_TOPICS: Topic[] = [
         id: 'fr-a1-ea-q5',
         type: 'listen',
         difficulty: 2,
-        promptEs: 'Escucha a Valeria en francés y selecciona la traducción correcta.',
+        promptEs: 'Escucha el audio en francés y selecciona la traducción correcta.',
         audioText: 'Vous avez un stylo rouge, s’il vous plaît ?',
         options: [
           '¿Tiene usted un esfero rojo, por favor?',
@@ -395,7 +395,7 @@ export const FRENCH_A1_TOPICS: Topic[] = [
         id: 'fr-a1-ag-q5',
         type: 'listen',
         difficulty: 2,
-        promptEs: 'Escucha a Valeria y distingue si habla en singular o plural.',
+        promptEs: 'Escucha el audio y distingue si habla en singular o plural.',
         audioText: 'Les étudiants écoutent les chansons françaises.',
         options: [
           'Los estudiantes escuchan las canciones francesas.',
@@ -536,7 +536,7 @@ export const FRENCH_A1_TOPICS: Topic[] = [
         id: 'fr-a1-er-q5',
         type: 'listen',
         difficulty: 2,
-        promptEs: 'Escucha la frase de Valeria y elige el verbo correcto.',
+        promptEs: 'Escucha la frase y elige el verbo correcto.',
         audioText: 'Nous habitons près du campus avec deux amis.',
         options: [
           'Vivimos cerca del campus con dos amigos.',
@@ -826,7 +826,7 @@ export const FRENCH_A1_TOPICS: Topic[] = [
         id: 'fr-a1-af-q5',
         type: 'listen',
         difficulty: 2,
-        promptEs: 'Escucha a Valeria y responde a qué país viajan.',
+        promptEs: 'Escucha el audio y responde a qué país viajan.',
         audioText: 'En août, nous allons au Canada et puis en Colombie.',
         options: [
           'A Canadá y luego a Colombia.',
@@ -971,7 +971,7 @@ export const FRENCH_A1_TOPICS: Topic[] = [
         id: 'fr-a1-nh-q5',
         type: 'listen',
         difficulty: 2,
-        promptEs: 'Escucha a Valeria y selecciona qué día y a qué hora es la tutoría.',
+        promptEs: 'Escucha el audio y selecciona qué día y a qué hora es la tutoría.',
         audioText: 'Le tutorat de français est jeudi à quinze heures.',
         options: [
           'El jueves a las 3:00 p. m. (15h).',
@@ -1101,7 +1101,7 @@ export const FRENCH_A1_TOPICS: Topic[] = [
         id: 'fr-a1-pf-q5',
         type: 'listen',
         difficulty: 2,
-        promptEs: 'Escucha a Valeria y responde a quién pertenece la idea.',
+        promptEs: 'Escucha el audio y responde a quién pertenece la idea.',
         audioText: "C'est une excellente question, j'aime beaucoup ton idée !",
         options: [
           'A ti ("tu idea").',

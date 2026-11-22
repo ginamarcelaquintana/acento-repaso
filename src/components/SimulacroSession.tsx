@@ -250,18 +250,18 @@ export function SimulacroSession({
             </div>
             <div className="rounded-2xl bg-[#FAF7F2] p-4 text-center">
               <p className="font-display text-2xl font-extrabold text-[#059669]">
+                {correctCount}/{total}
+              </p>
+              <p className="text-xs font-semibold text-[#64748B]">
+                Aciertos
+              </p>
+            </div>
+            <div className="rounded-2xl bg-[#FAF7F2] p-4 text-center">
+              <p className="font-display text-2xl font-extrabold text-[#D94646]">
                 {pct}%
               </p>
               <p className="text-xs font-semibold text-[#64748B]">
                 Efectividad total
-              </p>
-            </div>
-            <div className="rounded-2xl bg-[#FAF7F2] p-4 text-center">
-              <p className="font-display text-2xl font-extrabold text-[#D97706]">
-                +{correctCount * 12 + 20} XP
-              </p>
-              <p className="text-xs font-semibold text-[#64748B]">
-                Experiencia ganada
               </p>
             </div>
           </div>
@@ -305,7 +305,7 @@ export function SimulacroSession({
                 className="inline-flex items-center gap-2 rounded-2xl bg-[#D94646] px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-[#C23939]"
               >
                 <Sparkles className="h-4 w-4" />
-                Repasar mis {missedItems.length} errores con Valeria
+                Repasar mis {missedItems.length} errores en Tutoría
               </button>
             )}
             <button

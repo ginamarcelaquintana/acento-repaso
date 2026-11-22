@@ -60,9 +60,9 @@ function buildLocalAskFallback(data: z.infer<typeof AskSchema>) {
   }
 
   if (example) {
-    parts.push(`Por ejemplo: "${example.target}" (${example.spanish}).`);
+    parts.push(`Por ejemplo, "${example.target}", que significa ${example.spanish}.`);
   } else if (mistake) {
-    parts.push(`Recuerda evitar "${mistake.wrong}" y usar "${mistake.right}".`);
+    parts.push(`Evita decir "${mistake.wrong}" y di "${mistake.right}".`);
   }
 
   if (parts.length === 0) {
@@ -130,7 +130,7 @@ export async function POST(req: Request) {
     if (!parsed.success) {
       metric('tutor.request', 1, { outcome: 'invalid', action: 'unknown' });
       return Response.json(
-        { error: 'Solicitud inválida para la tutora.' },
+        { error: 'Solicitud inválida para tutoría.' },
         { status: 400 }
       );
     }
@@ -139,32 +139,13 @@ export async function POST(req: Request) {
     validatedInput = input;
     actionForMetric = input.action;
 
-    const hasGatewayAuth = Boolean(
-      process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN
-    );
-
-    if (!hasGatewayAuth) {
-      if (input.action === 'ask') {
-        metric('tutor.request', 1, { outcome: 'local_fallback', action: 'ask' });
-        return Response.json(buildLocalAskFallback(input));
-      }
-      metric('tutor.request', 1, {
-        outcome: 'local_fallback',
-        action: 'generate_questions',
-      });
-      return Response.json({
-        questions: buildLocalGeneratedQuestions(input),
-        source: 'local',
-      });
-    }
-
     if (input.action === 'ask') {
       const targetLangLabel = input.language === 'en' ? 'inglés' : 'francés';
       const systemPrompt = [
-        'Eres la profe Valeria, una profesora colombiana joven, cálida, cercana y muy profesional de inglés y francés.',
-        'Responde siempre en español colombiano claro, amable y natural (nunca uses jerga excesiva ni menciones que eres una inteligencia artificial).',
-        'Sé súper concisa: máximo 3 o 4 frases cortas en texto plano (sin asteriscos ni encabezados markdown).',
-        `Incluye siempre 1 ejemplo corto y exacto en ${targetLangLabel} con su significado.`,
+        'Eres una profesora universitaria colombiana cálida, cercana y muy profesional de inglés y francés.',
+        'Responde siempre en español colombiano claro, amable y natural. Nunca te des un nombre propio ni menciones que eres una inteligencia artificial.',
+        'Sé súper concisa: máximo 2 o 3 frases cortas en texto plano, sin guiones, sin barras inclinadas, sin asteriscos y sin listas markdown.',
+        `Incluye 1 ejemplo corto y exacto en ${targetLangLabel} entre comillas dobles seguido de su significado.`,
       ].join(' ');
 
       const userPrompt = [
@@ -204,7 +185,7 @@ export async function POST(req: Request) {
       prompt: `Generate 3 brand-new, crystal-clear multiple-choice questions for level ${input.level} ${targetLangName} on the topic "${input.topicTitle}".
 Grammar context: ${input.grammarSummary}
 Rules:
-- All prompts (promptEs), hints (hintEs), clueHighlight, and explanations (explanationEs) must be written in warm, concise Colombian Spanish.
+- All prompts (promptEs), hints (hintEs), clueHighlight, and explanations (explanationEs) must be written in warm, concise Colombian Spanish without unnecessary dashes.
 - Every option and spokenAnswerTarget must be 100% grammatically accurate ${targetLangName} with correct accents/punctuation.
 - Provide 4 distinct options where exactly 1 is right (correctIndex 0-3). Vary correctIndex across the 3 questions.`,
     });
@@ -229,7 +210,10 @@ Rules:
       source: 'ai',
     });
   } catch (err) {
-    console.warn('[tutor] error, using graceful fallback:', err instanceof Error ? err.message : 'error');
+    console.warn(
+      '[tutor] error, using graceful fallback:',
+      err instanceof Error ? err.message : 'error'
+    );
     metric('tutor.request', 1, { outcome: 'error_fallback', action: actionForMetric });
     metric('tutor.duration_ms', Math.round(performance.now() - startedAt), {
       action: actionForMetric,
@@ -247,7 +231,7 @@ Rules:
 
     return Response.json({
       reply:
-        'Fíjate primero en quién realiza la acción y busca la pista que te marqué en el ejercicio. ¡Paso a paso sale fácil!',
+        'Fíjate primero en quién realiza la acción y busca la pista señalada en el ejercicio. Paso a paso sale fácil.',
       source: 'local',
     });
   }

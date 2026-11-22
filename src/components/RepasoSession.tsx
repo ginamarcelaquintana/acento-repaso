@@ -5,9 +5,8 @@ import {
   ArrowLeft,
   ArrowRight,
   CheckCircle2,
-  Gauge,
   HelpCircle,
-  MessageCircleQuestion,
+  MessageCircle,
   Mic,
   RotateCcw,
   Sparkles,
@@ -38,7 +37,6 @@ interface RepasoSessionProps {
   progress: UserProgress;
   nextTopic?: Topic;
   onBack: () => void;
-  onToggleSlow: () => void;
   onRecordAnswer: (
     topicSlug: string,
     questionId: string,
@@ -69,7 +67,6 @@ export function RepasoSession({
   progress,
   nextTopic,
   onBack,
-  onToggleSlow,
   onRecordAnswer,
   onCompleteSession,
   onOpenNextTopic,
@@ -82,28 +79,21 @@ export function RepasoSession({
   const [attempts, setAttempts] = useState(0);
   const [wasCorrect, setWasCorrect] = useState<boolean | null>(null);
   const [sessionScore, setSessionScore] = useState(0);
-  const [sessionXp, setSessionXp] = useState(0);
   const [comboStreak, setComboStreak] = useState(0);
   const [finished, setFinished] = useState(false);
 
-  // Per-question user selection state
   const [selectedChoice, setSelectedChoice] = useState<number | null>(null);
   const [selectedFill, setSelectedFill] = useState<string | null>(null);
   const [orderSelectedIndices, setOrderSelectedIndices] = useState<number[]>([]);
 
-  // Tutor voice & state
   const [tutorMessage, setTutorMessage] = useState<string>(
     WELCOME_PHRASES[topic.language][0].display
   );
   const [tutorMood, setTutorMood] = useState<TutorMood>('neutral');
-  const [lastUtterance, setLastUtterance] = useState<TutorUtterance>(
-    WELCOME_PHRASES[topic.language][0]
-  );
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [generatingExtra, setGeneratingExtra] = useState(false);
 
-  // Optional speech recognition practice (SSR-safe without effect setState)
   const supportsMic = useSyncExternalStore(
     () => () => {},
     () => {
@@ -144,7 +134,6 @@ export function RepasoSession({
     const intro = welcomeDeckRef.current.next();
     queueMicrotask(() => {
       setTutorMessage(intro.display);
-      setLastUtterance(intro);
       setTutorMood('neutral');
     });
 
@@ -152,7 +141,7 @@ export function RepasoSession({
       voiceEngine.speak({
         text: intro.speakText,
         mode: intro.voiceMode,
-        slow: progress.voiceSlow,
+        targetLang: topic.language,
         muted: progress.voiceMuted,
         onStart: () => setIsSpeaking(true),
         onEnd: () => setIsSpeaking(false),
@@ -167,14 +156,13 @@ export function RepasoSession({
 
   const speakUtterance = (utterance: TutorUtterance, followUpTarget?: string) => {
     setTutorMessage(utterance.display);
-    setLastUtterance(utterance);
 
     if (progress.voiceMuted) return;
 
     voiceEngine.speak({
       text: utterance.speakText,
       mode: utterance.voiceMode,
-      slow: progress.voiceSlow,
+      targetLang: topic.language,
       muted: progress.voiceMuted,
       onStart: () => setIsSpeaking(true),
       onEnd: () => {
@@ -183,7 +171,7 @@ export function RepasoSession({
           voiceEngine.speak({
             text: followUpTarget,
             mode: targetVoiceMode,
-            slow: progress.voiceSlow,
+            targetLang: topic.language,
             muted: progress.voiceMuted,
             onStart: () => setIsSpeaking(true),
             onEnd: () => setIsSpeaking(false),
@@ -193,11 +181,11 @@ export function RepasoSession({
     });
   };
 
-  const speakTargetAudio = (text: string, forceSlow?: boolean) => {
+  const speakTargetAudio = (text: string) => {
     voiceEngine.speak({
       text,
       mode: targetVoiceMode,
-      slow: forceSlow ?? progress.voiceSlow,
+      targetLang: topic.language,
       muted: false,
       onStart: () => setIsSpeaking(true),
       onEnd: () => setIsSpeaking(false),
@@ -222,7 +210,6 @@ export function RepasoSession({
       setStage('solved');
       setWasCorrect(true);
       setSessionScore((s) => s + 1);
-      setSessionXp((x) => x + earned);
       setComboStreak(nextCombo);
       setTutorMood('praise');
 
@@ -238,7 +225,6 @@ export function RepasoSession({
       return;
     }
 
-    // Wrong answer
     if (attempts === 0) {
       setAttempts(1);
       setStage('coaching');
@@ -253,7 +239,6 @@ export function RepasoSession({
       setComboStreak(0);
       setTutorMood('neutral');
       onRecordAnswer(topic.slug, currentQuestion.id, false, 2);
-      setSessionXp((x) => x + 2);
 
       const gentleCorrection: TutorUtterance = {
         display: `Tranquilo, mira cómo era: ${currentQuestion.explanationEs}`,
@@ -321,7 +306,6 @@ export function RepasoSession({
     } else {
       setFinished(true);
       onCompleteSession(topic.slug, 25);
-      setSessionXp((x) => x + 25);
       const winMsg: TutorUtterance = {
         display: '¡Felicitaciones! Terminaste todo este repaso con súper buena actitud.',
         speakText: '¡Felicitaciones! Terminaste todo este repaso con súper buena actitud.',
@@ -398,7 +382,7 @@ export function RepasoSession({
       if (ratio >= 0.65) {
         setMicFeedback(`¡Qué bien suena! ("${spoken}")`);
       } else {
-        setMicFeedback(`Escuché "${spoken}". ¡Escúchala despacio y repite!`);
+        setMicFeedback(`Escuché "${spoken}". Prueba repetirla con calma.`);
       }
     };
     rec.onerror = () => {
@@ -422,12 +406,12 @@ export function RepasoSession({
           <div className="mx-auto flex h-24 w-24 items-center justify-center overflow-hidden rounded-3xl ring-4 ring-[#ECFDF5]">
             <img
               src="/images/tutor-valeria.jpg"
-              alt="Profe Valeria celebrando tu repaso"
+              alt="Sesión completada"
               className="h-full w-full object-cover"
             />
           </div>
           <span className="mt-4 inline-block rounded-full bg-[#ECFDF5] px-3 py-1 text-xs font-bold text-[#059669]">
-            ¡Sesión completada!
+            Sesión completada
           </span>
           <h1 className="font-display mt-3 text-2xl font-extrabold text-[#1E293B] sm:text-3xl">
             {accuracy >= 80
@@ -438,7 +422,7 @@ export function RepasoSession({
             {customTitle ?? topic.titleEs}
           </p>
 
-          <div className="mt-6 grid grid-cols-3 gap-3">
+          <div className="mt-6 grid grid-cols-2 gap-3">
             <div className="rounded-2xl bg-[#FAF7F2] p-4">
               <p className="font-display text-2xl font-extrabold text-[#059669]">
                 {sessionScore}/{questions.length}
@@ -453,14 +437,6 @@ export function RepasoSession({
               </p>
               <p className="mt-0.5 text-xs font-semibold text-[#64748B]">
                 Precisión
-              </p>
-            </div>
-            <div className="rounded-2xl bg-[#FAF7F2] p-4">
-              <p className="font-display text-2xl font-extrabold text-[#D97706]">
-                +{sessionXp}
-              </p>
-              <p className="mt-0.5 text-xs font-semibold text-[#64748B]">
-                Puntos XP
               </p>
             </div>
           </div>
@@ -506,7 +482,6 @@ export function RepasoSession({
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6">
-      {/* Top Progress Header */}
       <div className="mb-4 flex items-center justify-between gap-3">
         <button
           type="button"
@@ -517,17 +492,11 @@ export function RepasoSession({
           Salir del repaso
         </button>
 
-        <div className="flex items-center gap-2 text-xs font-bold text-[#64748B]">
-          <span>
-            Pregunta {index + 1} de {questions.length}
-          </span>
-          <span className="rounded-full bg-[#FFFBEB] px-2.5 py-0.5 text-[#B45309]">
-            +{sessionXp} XP
-          </span>
-        </div>
+        <span className="text-xs font-bold text-[#64748B]">
+          Pregunta {index + 1} de {questions.length}
+        </span>
       </div>
 
-      {/* Progress Bar */}
       <div className="mb-5 h-2.5 overflow-hidden rounded-full bg-[#ECE5D8]">
         <div
           className={`h-full rounded-full transition-all duration-500 ${
@@ -537,18 +506,13 @@ export function RepasoSession({
         />
       </div>
 
-      {/* Tutor Live Bubble */}
       <TutorBubble
         message={tutorMessage}
         mood={tutorMood}
         isSpeaking={isSpeaking}
-        isSlow={progress.voiceSlow}
         clueLabel={stage === 'coaching' ? currentQuestion.hintEs : undefined}
-        onReplay={() => speakUtterance(lastUtterance)}
-        onToggleSlow={onToggleSlow}
       />
 
-      {/* Interactive Question Card */}
       <div className="mt-5 rounded-[28px] border border-[#ECE5D8] bg-white p-5 shadow-xs sm:p-7">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <span
@@ -575,7 +539,6 @@ export function RepasoSession({
           {currentQuestion.promptEs}
         </h2>
 
-        {/* Question Format Specific UI */}
         {(currentQuestion.type === 'choice' || currentQuestion.type === 'listen') && (
           <div className="mt-4">
             {currentQuestion.type === 'choice' && currentQuestion.sentenceTarget && (
@@ -588,7 +551,7 @@ export function RepasoSession({
                     type="button"
                     onClick={() => speakTargetAudio(currentQuestion.audioText!)}
                     className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white text-[#D94646] shadow-xs"
-                    aria-label="Escuchar frase"
+                    aria-label="Pronunciar frase"
                   >
                     <Volume2 className="h-4 w-4" />
                   </button>
@@ -600,19 +563,11 @@ export function RepasoSession({
               <div className="mb-4 flex flex-wrap items-center gap-3 rounded-2xl border border-[#2563EB]/25 bg-[#EFF6FF]/60 p-4">
                 <button
                   type="button"
-                  onClick={() => speakTargetAudio(currentQuestion.audioText, false)}
+                  onClick={() => speakTargetAudio(currentQuestion.audioText)}
                   className="inline-flex items-center gap-2 rounded-xl bg-[#2563EB] px-4 py-2.5 text-sm font-bold text-white shadow-xs transition hover:bg-[#1D4ED8] active:translate-y-[1px]"
                 >
                   <Volume2 className="h-4 w-4" />
-                  Escuchar audio
-                </button>
-                <button
-                  type="button"
-                  onClick={() => speakTargetAudio(currentQuestion.audioText, true)}
-                  className="inline-flex items-center gap-1.5 rounded-xl border border-[#BFDBFE] bg-white px-3.5 py-2.5 text-xs font-bold text-[#1E40AF] transition hover:bg-[#EFF6FF]"
-                >
-                  <Gauge className="h-3.5 w-3.5" />
-                  Despacio (0.8x)
+                  Reproducir audio
                 </button>
                 {stage === 'solved' && (
                   <p className="w-full text-xs font-semibold text-[#1E293B]">
@@ -622,7 +577,6 @@ export function RepasoSession({
               </div>
             )}
 
-            {/* Pointing finger hint highlight inside question when coaching */}
             {stage === 'coaching' &&
               currentQuestion.type === 'choice' &&
               currentQuestion.clueHighlight && (
@@ -685,9 +639,7 @@ export function RepasoSession({
               <span
                 className={`mx-1 inline-flex min-w-[92px] items-center justify-center rounded-xl border-2 px-3 py-0.5 text-sm font-extrabold ${
                   stage === 'solved'
-                    ? wasCorrect
-                      ? 'border-[#059669] bg-[#ECFDF5] text-[#065F46]'
-                      : 'border-[#059669] bg-[#ECFDF5] text-[#065F46]'
+                    ? 'border-[#059669] bg-[#ECFDF5] text-[#065F46]'
                     : selectedFill
                       ? 'border-[#F59E0B] bg-[#FFFBEB] text-[#92400E]'
                       : 'border-dashed border-[#94A3B8] bg-white text-[#94A3B8]'
@@ -737,11 +689,10 @@ export function RepasoSession({
               Significado: &ldquo;{currentQuestion.spanishMeaning}&rdquo;
             </p>
 
-            {/* Sentence Drop Zone */}
             <div className="min-h-[68px] rounded-2xl border-2 border-dashed border-[#D4CBB8] bg-[#FAF7F2] p-3.5">
               {orderSelectedIndices.length === 0 ? (
                 <p className="text-xs font-medium text-[#94A3B8]">
-                  Toca las palabras de abajo en orden para armar la frase...
+                  Toca las palabras en orden para armar la frase...
                 </p>
               ) : (
                 <div className="flex flex-wrap gap-2">
@@ -764,7 +715,6 @@ export function RepasoSession({
               )}
             </div>
 
-            {/* Available Word Chips */}
             <div className="mt-3.5 flex flex-wrap gap-2">
               {currentQuestion.words.map((word, wIdx) => {
                 const used = orderSelectedIndices.includes(wIdx);
@@ -817,7 +767,6 @@ export function RepasoSession({
           </div>
         )}
 
-        {/* Solved Explanation & Audio */}
         {stage === 'solved' && (
           <div
             className={`mt-5 rounded-2xl border p-4 animate-soft-pop ${
@@ -834,40 +783,35 @@ export function RepasoSession({
               >
                 {wasCorrect ? '✓ Respuesta lograda' : 'Para recordar'}
               </span>
-              <div className="flex items-center gap-2">
+              {supportsMic && (
                 <button
                   type="button"
                   onClick={() =>
-                    speakTargetAudio(currentQuestion.spokenAnswerTarget)
+                    handlePracticeMic(currentQuestion.spokenAnswerTarget)
                   }
-                  className="inline-flex items-center gap-1 rounded-xl bg-white px-3 py-1 text-xs font-bold text-[#1E293B] shadow-2xs hover:text-[#D94646]"
+                  className={`inline-flex items-center gap-1 rounded-xl px-3 py-1 text-xs font-bold shadow-2xs ${
+                    micListening
+                      ? 'bg-[#D94646] text-white'
+                      : 'bg-white text-[#475569] hover:text-[#1E293B]'
+                  }`}
                 >
-                  <Volume2 className="h-3.5 w-3.5" />
-                  Escuchar correcta
+                  <Mic className="h-3.5 w-3.5" />
+                  {micListening ? 'Habla...' : 'Pronunciar'}
                 </button>
-                {supportsMic && (
-                  <button
-                    type="button"
-                    onClick={() =>
-                      handlePracticeMic(currentQuestion.spokenAnswerTarget)
-                    }
-                    className={`inline-flex items-center gap-1 rounded-xl px-3 py-1 text-xs font-bold shadow-2xs ${
-                      micListening
-                        ? 'bg-[#D94646] text-white'
-                        : 'bg-white text-[#475569] hover:text-[#1E293B]'
-                    }`}
-                  >
-                    <Mic className="h-3.5 w-3.5" />
-                    {micListening ? 'Habla...' : 'Pronunciar'}
-                  </button>
-                )}
-              </div>
+              )}
             </div>
 
-            <p className="mt-2 text-sm font-bold text-[#1E293B]">
-              {currentQuestion.spokenAnswerTarget}
-            </p>
-            <p className="mt-1 text-xs leading-relaxed text-[#475569]">
+            <button
+              type="button"
+              onClick={() => speakTargetAudio(currentQuestion.spokenAnswerTarget)}
+              className="mt-2 flex items-center gap-2 rounded-xl bg-white/80 px-3 py-2 text-left text-sm font-bold text-[#1E293B] transition hover:bg-white hover:text-[#D94646]"
+              title="Reproducir pronunciación"
+            >
+              <Volume2 className="h-4 w-4 shrink-0 text-[#D94646]" />
+              <span>{currentQuestion.spokenAnswerTarget}</span>
+            </button>
+
+            <p className="mt-2 text-xs leading-relaxed text-[#475569]">
               {currentQuestion.explanationEs}
             </p>
             {micFeedback && (
@@ -878,15 +822,14 @@ export function RepasoSession({
           </div>
         )}
 
-        {/* Bottom Actions */}
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-[#F1ECE2] pt-4">
           <button
             type="button"
             onClick={() => setHelpOpen(true)}
             className="inline-flex items-center gap-2 rounded-2xl border border-[#E6DEC8] bg-[#FAF7F2] px-4 py-2.5 text-xs font-bold text-[#334155] transition hover:border-[#D94646]/40 hover:bg-white"
           >
-            <MessageCircleQuestion className="h-4 w-4 text-[#D94646]" />
-            <span>¿Duda? Pregúntale a Valeria</span>
+            <MessageCircle className="h-4 w-4 text-[#D94646]" />
+            <span>Tutoría</span>
           </button>
 
           {stage === 'solved' && (
@@ -910,7 +853,6 @@ export function RepasoSession({
         isOpen={helpOpen}
         topic={topic}
         currentQuestion={currentQuestion}
-        voiceSlow={progress.voiceSlow}
         onClose={() => setHelpOpen(false)}
       />
     </div>

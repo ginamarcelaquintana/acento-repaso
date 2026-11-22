@@ -1,4 +1,4 @@
-import type { Topic } from '@/types/curriculum';
+﻿import type { Topic } from '@/types/curriculum';
 
 export const ENGLISH_A2_B1_TOPICS: Topic[] = [
   {
@@ -239,7 +239,7 @@ export const ENGLISH_A2_B1_TOPICS: Topic[] = [
         id: 'en-a2-pa-q5',
         type: 'listen',
         difficulty: 2,
-        promptEs: 'Escucha a Valeria y responde qué pasó ayer.',
+        promptEs: 'Escucha el audio y responde qué pasó ayer.',
         audioText: 'We studied for two hours and then we took a short break.',
         options: [
           'Estudiaron dos horas y luego descansaron un rato.',
@@ -632,7 +632,7 @@ export const ENGLISH_A2_B1_TOPICS: Topic[] = [
         id: 'en-a2-ac-q5',
         type: 'listen',
         difficulty: 2,
-        promptEs: 'Escucha a Valeria y elige la razón por la que Camila mejoró.',
+        promptEs: 'Escucha el audio y elige la razón por la que Camila mejoró.',
         audioText: 'Camila practiced patiently every night; consequently, her accent improved.',
         options: [
           'Practicó con paciencia cada noche.',
@@ -892,7 +892,7 @@ export const ENGLISH_A2_B1_TOPICS: Topic[] = [
         id: 'en-b1-gi-q5',
         type: 'listen',
         difficulty: 3,
-        promptEs: 'Escucha a Valeria y responde qué evitó hacer el estudiante.',
+        promptEs: 'Escucha el audio y responde qué evitó hacer el estudiante.',
         audioText: 'He avoided making the same mistake by reviewing the guide first.',
         options: [
           'Evitó cometer el mismo error.',

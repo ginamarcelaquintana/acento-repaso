@@ -87,7 +87,7 @@ export const PRAISE_FR: TutorUtterance[] = [
 export const COACHING_PROMPTS_EN: TutorUtterance[] = [
   { display: 'Mmm, ¿seguro que esto se hace así? Mira la pista que te señalo.', speakText: 'Mmm, ¿seguro que esto se hace así? Mira la pista que te señalo.', voiceMode: 'es-CO' },
   { display: '¡Casi, casi! Pausa un segundito y revisa esta clave.', speakText: '¡Casi, casi! Pausa un segundito y revisa esta clave.', voiceMode: 'es-CO' },
-  { display: 'Wait a second... ¿seguro? Dale una segunda mirada aquí.', speakText: '{en:Wait a second...} ¿seguro? Dale una segunda mirada aquí.', voiceMode: 'mixed-en' },
+  { display: 'Wait a second, ¿seguro? Dale una segunda mirada aquí.', speakText: '{en:Wait a second,} ¿seguro? Dale una segunda mirada aquí.', voiceMode: 'mixed-en' },
   { display: 'Ojo con esa trampa común. Fíjate justo en lo que te indico.', speakText: 'Ojo con esa trampa común. Fíjate justo en lo que te indico.', voiceMode: 'es-CO' },
   { display: '¡Tranquilo! Inténtalo otra vez mirando esta pequeña guía.', speakText: '¡Tranquilo! Inténtalo otra vez mirando esta pequeña guía.', voiceMode: 'es-CO' },
   { display: 'Think twice! Revisa el sujeto o el tiempo en esta pista.', speakText: '{en:Think twice!} Revisa el sujeto o el tiempo en esta pista.', voiceMode: 'mixed-en' },
@@ -101,7 +101,7 @@ export const COACHING_PROMPTS_EN: TutorUtterance[] = [
 
 export const COACHING_PROMPTS_FR: TutorUtterance[] = [
   { display: 'Mmm, ¿seguro que esto se hace así? Mira la pista que te señalo.', speakText: 'Mmm, ¿seguro que esto se hace así? Mira la pista que te señalo.', voiceMode: 'es-CO' },
-  { display: 'Attends une seconde... ¿seguro? Revisa esta clave.', speakText: '{fr:Attends une seconde...} ¿seguro? Revisa esta clave.', voiceMode: 'mixed-fr' },
+  { display: 'Attends une seconde, ¿seguro? Revisa esta clave.', speakText: '{fr:Attends une seconde,} ¿seguro? Revisa esta clave.', voiceMode: 'mixed-fr' },
   { display: '¡Casi, casi! Pausa un segundito y fíjate en la terminación.', speakText: '¡Casi, casi! Pausa un segundito y fíjate en la terminación.', voiceMode: 'es-CO' },
   { display: 'Ojo con esa trampa típica del francés. Mira justo aquí.', speakText: 'Ojo con esa trampa típica del francés. Mira justo aquí.', voiceMode: 'es-CO' },
   { display: '¡Tranquilo! Inténtalo otra vez mirando esta pequeña guía.', speakText: '¡Tranquilo! Inténtalo otra vez mirando esta pequeña guía.', voiceMode: 'es-CO' },
@@ -115,9 +115,9 @@ export const COACHING_PROMPTS_FR: TutorUtterance[] = [
 ];
 
 export const SECOND_CHANCE_WINS: TutorUtterance[] = [
-  { display: '¡Aja! ¡Ahora sí! Qué bien corregido.', speakText: '¡Ajá! ¡Ahora sí! Qué bien corregido.', voiceMode: 'es-CO' },
-  { display: '¡Esooo! En cuanto viste la pista la sacaste al tiro.', speakText: '¡Eso! En cuanto viste la pista la sacaste al tiro.', voiceMode: 'es-CO' },
-  { display: '¡Viste qué fácil era? Así se graba para siempre.', speakText: '¡Viste qué fácil era? Así se graba para siempre.', voiceMode: 'es-CO' },
+  { display: '¡Ajá! ¡Ahora sí! Qué bien corregido.', speakText: '¡Ajá! ¡Ahora sí! Qué bien corregido.', voiceMode: 'es-CO' },
+  { display: '¡Eso! En cuanto viste la pista la sacaste al tiro.', speakText: '¡Eso! En cuanto viste la pista la sacaste al tiro.', voiceMode: 'es-CO' },
+  { display: '¿Viste qué fácil era? Así se graba para siempre.', speakText: '¿Viste qué fácil era? Así se graba para siempre.', voiceMode: 'es-CO' },
   { display: '¡Perfecto! Corregir sobre la marcha es la mejor forma de aprender.', speakText: '¡Perfecto! Corregir sobre la marcha es la mejor forma de aprender.', voiceMode: 'es-CO' },
   { display: '¡Muy bien! De esa no te vuelves a olvidar jamás.', speakText: '¡Muy bien! De esa no te vuelves a olvidar jamás.', voiceMode: 'es-CO' },
   { display: '¡Excelente ajuste! Eso demuestra que sí entendiste la lógica.', speakText: '¡Excelente ajuste! Eso demuestra que sí entendiste la lógica.', voiceMode: 'es-CO' },
@@ -125,17 +125,17 @@ export const SECOND_CHANCE_WINS: TutorUtterance[] = [
 
 export const WELCOME_PHRASES: Record<Language, TutorUtterance[]> = {
   en: [
-    { display: '¡Hola! Soy la profe Valeria. Vamos paso a paso, sin afán y con buena energía.', speakText: '¡Hola! Soy la profe Valeria. Vamos paso a paso, sin afán y con buena energía.', voiceMode: 'es-CO' },
-    { display: '¡Bienvenido a tu repaso! Si alguna duda se atraviesa, aquí estoy contigo.', speakText: '¡Bienvenido a tu repaso! Si alguna duda se atraviesa, aquí estoy contigo.', voiceMode: 'es-CO' },
+    { display: 'Vamos paso a paso, sin afán y con buena energía.', speakText: 'Vamos paso a paso, sin afán y con buena energía.', voiceMode: 'es-CO' },
+    { display: 'Si alguna duda se atraviesa, aquí tienes pistas y tutoría.', speakText: 'Si alguna duda se atraviesa, aquí tienes pistas y tutoría.', voiceMode: 'es-CO' },
     { display: "Let's start! Escucha con calma y confía en lo que ya sabes.", speakText: "{en:Let's start!} Escucha con calma y confía en lo que ya sabes.", voiceMode: 'mixed-en' },
-    { display: '¡Qué alegría verte por aquí! Hagamos que este tema te quede clarísimo.', speakText: '¡Qué alegría verte por aquí! Hagamos que este tema te quede clarísimo.', voiceMode: 'es-CO' },
-    { display: 'Ready? Vamos a repasar este tema como si estuviéramos en tutoría privada.', speakText: '{en:Ready?} Vamos a repasar este tema como si estuviéramos en tutoría privada.', voiceMode: 'mixed-en' },
+    { display: '¡Qué alegría verte por aquí! Hagamos que este tema quede clarísimo.', speakText: '¡Qué alegría verte por aquí! Hagamos que este tema quede clarísimo.', voiceMode: 'es-CO' },
+    { display: 'Ready? Vamos a repasar este tema paso a paso.', speakText: '{en:Ready?} Vamos a repasar este tema paso a paso.', voiceMode: 'mixed-en' },
   ],
   fr: [
-    { display: '¡Hola! Soy la profe Valeria. Vamos paso a paso con el francés, sin afán.', speakText: '¡Hola! Soy la profe Valeria. Vamos paso a paso con el francés, sin afán.', voiceMode: 'es-CO' },
-    { display: "Allons-y ! Hoy este tema de francés te va a quedar súper claro.", speakText: "{fr:Allons-y!} Hoy este tema de francés te va a quedar súper claro.", voiceMode: 'mixed-fr' },
-    { display: '¡Bienvenido! Respira hondo, escucha los detalles y aquí estoy para guiarte.', speakText: '¡Bienvenido! Respira hondo, escucha los detalles y aquí estoy para guiarte.', voiceMode: 'es-CO' },
-    { display: "C'est parti ! Vamos a practicar juntos como en tutoría personal.", speakText: "{fr:C'est parti!} Vamos a practicar juntos como en tutoría personal.", voiceMode: 'mixed-fr' },
+    { display: 'Vamos paso a paso con el francés, sin afán.', speakText: 'Vamos paso a paso con el francés, sin afán.', voiceMode: 'es-CO' },
+    { display: 'Allons-y ! Hoy este tema de francés te va a quedar súper claro.', speakText: '{fr:Allons-y!} Hoy este tema de francés te va a quedar súper claro.', voiceMode: 'mixed-fr' },
+    { display: 'Respira hondo, escucha los detalles y sigue cada pista.', speakText: 'Respira hondo, escucha los detalles y sigue cada pista.', voiceMode: 'es-CO' },
+    { display: "C'est parti ! Vamos a practicar este tema juntos.", speakText: "{fr:C'est parti!} Vamos a practicar este tema juntos.", voiceMode: 'mixed-fr' },
     { display: '¡Qué bueno tenerte aquí! Paso a paso le cogemos el ritmo al francés.', speakText: '¡Qué bueno tenerte aquí! Paso a paso le cogemos el ritmo al francés.', voiceMode: 'es-CO' },
   ],
 };

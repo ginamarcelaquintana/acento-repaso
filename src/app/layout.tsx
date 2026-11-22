@@ -15,9 +15,9 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'Acento · Repasos y Simulacros de Inglés y Francés',
+  title: 'Accento · Repasos y Simulacros de Inglés y Francés',
   description:
-    'Plataforma interactiva de repasos guiados, tarjetas con voz y simulacros para estudiantes primerizos de inglés y francés, conectada con English TECH.',
+    'Plataforma visual e interactiva de repasos guiados, tarjetas y simulacros para estudiantes primerizos de inglés y francés, conectada con English TECH.',
 };
 
 export default function RootLayout({

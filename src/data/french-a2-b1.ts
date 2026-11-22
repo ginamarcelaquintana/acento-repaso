@@ -1,4 +1,4 @@
-import type { Topic } from '@/types/curriculum';
+﻿import type { Topic } from '@/types/curriculum';
 
 export const FRENCH_A2_B1_TOPICS: Topic[] = [
   {
@@ -100,7 +100,7 @@ export const FRENCH_A2_B1_TOPICS: Topic[] = [
         id: 'fr-a2-pt-q5',
         type: 'listen',
         difficulty: 2,
-        promptEs: 'Escucha a Valeria y responde qué NO lleva su plato.',
+        promptEs: 'Escucha el audio y responde qué NO lleva su plato.',
         audioText: 'Je prends des légumes grillés et de l’eau, mais pas de dessert.',
         options: [
           'Postre.',
@@ -233,7 +233,7 @@ export const FRENCH_A2_B1_TOPICS: Topic[] = [
         id: 'fr-a2-pr-q5',
         type: 'listen',
         difficulty: 2,
-        promptEs: 'Escucha a Valeria y responde qué hacen los estudiantes primero.',
+        promptEs: 'Escucha el audio y responde qué hacen los estudiantes primero.',
         audioText: 'D’abord, ils se connectent, puis ils s’entraînent pendant vingt minutes.',
         options: [
           'Primero se conectan y luego entrenan 20 minutos.',
@@ -366,7 +366,7 @@ export const FRENCH_A2_B1_TOPICS: Topic[] = [
         id: 'fr-a2-fp-q5',
         type: 'listen',
         difficulty: 2,
-        promptEs: 'Escucha a Valeria y responde qué acaba de hacer.',
+        promptEs: 'Escucha el audio y responde qué acaba de hacer.',
         audioText: 'Je viens d’envoyer les liens sur la plateforme.',
         options: [
           'Acaba de enviar los enlaces a la plataforma.',
@@ -495,7 +495,7 @@ export const FRENCH_A2_B1_TOPICS: Topic[] = [
         id: 'fr-a2-pc-q5',
         type: 'listen',
         difficulty: 2,
-        promptEs: 'Escucha a Valeria y elige qué hizo ayer en la tarde.',
+        promptEs: 'Escucha el audio y elige qué hizo ayer en la tarde.',
         audioText: 'Hier après-midi, j’ai lu un article et j’ai écrit un résumé.',
         options: [
           'Leyó un artículo y escribió un resumen.',
@@ -757,7 +757,7 @@ export const FRENCH_A2_B1_TOPICS: Topic[] = [
         id: 'fr-b1-pc-q5',
         type: 'listen',
         difficulty: 3,
-        promptEs: 'Escucha a Valeria y responde a quién le explica la lección.',
+        promptEs: 'Escucha el audio y responde a quién le explica la lección.',
         audioText: 'Ton frère a des doutes ? Pas de souci, je lui explique tout de suite.',
         options: [
           'A tu hermano (singular, masculino).',

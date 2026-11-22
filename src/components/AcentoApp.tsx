@@ -30,12 +30,12 @@ import { voiceEngine } from '@/lib/voice-engine';
 import { FlashcardDeck } from './FlashcardDeck';
 import { HeroExplorer } from './HeroExplorer';
 import { MicroGuideView } from './MicroGuideView';
-import { ProgressModal } from './ProgressModal';
 import { RepasoSession } from './RepasoSession';
 import { SimulacroSession, type SimulacroItem } from './SimulacroSession';
 import { SimulacroSetup } from './SimulacroSetup';
 import { TopNav } from './TopNav';
 import { TopicCatalog } from './TopicCatalog';
+import { TutorHelpDrawer } from './TutorHelpDrawer';
 
 type ActiveView =
   | { kind: 'home' }
@@ -86,7 +86,7 @@ export function AcentoApp() {
     () => initialDeepLink.level ?? 'A1'
   );
   const [favoritesOnly, setFavoritesOnly] = useState(false);
-  const [progressModalOpen, setProgressModalOpen] = useState(false);
+  const [globalTutorOpen, setGlobalTutorOpen] = useState(false);
   const fromEnglishTech = initialDeepLink.fromEnglishTech;
 
   useEffect(() => {
@@ -123,18 +123,6 @@ export function AcentoApp() {
     setSearchQuery('');
     const el = document.getElementById('catalogo-temas');
     el?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  const handleToggleMute = () => {
-    setProgress((prev) => {
-      const nextMuted = !prev.voiceMuted;
-      if (nextMuted) voiceEngine.stop();
-      return { ...prev, voiceMuted: nextMuted };
-    });
-  };
-
-  const handleToggleSlow = () => {
-    setProgress((prev) => ({ ...prev, voiceSlow: !prev.voiceSlow }));
   };
 
   const handleToggleFavoriteTopic = (slug: string) => {
@@ -182,19 +170,37 @@ export function AcentoApp() {
     return getNextTopic(view.topic);
   }, [view]);
 
+  const activeTutorTopic = useMemo(() => {
+    if (
+      view.kind === 'guide' ||
+      view.kind === 'repaso' ||
+      view.kind === 'tarjetas'
+    ) {
+      return view.topic;
+    }
+    if (view.kind === 'simulacro-setup' && view.preselectedTopic) {
+      return view.preselectedTopic;
+    }
+    const fallbackSlug =
+      languageFilter === 'fr' ? 'fr-a1-etre-avoir' : 'en-a1-to-be';
+    return getTopicBySlug(fallbackSlug) ?? ALL_TOPICS[0];
+  }, [view, languageFilter]);
+
   return (
     <div className="flex min-h-screen flex-col bg-[#FAF7F2]">
       <TopNav
-        progress={progress}
         fromEnglishTech={fromEnglishTech}
         onGoHome={() => {
           voiceEngine.stop();
           setView({ kind: 'home' });
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
-        onToggleMute={handleToggleMute}
-        onToggleSlow={handleToggleSlow}
-        onOpenProgress={() => setProgressModalOpen(true)}
+        onOpenSimulacro={() => {
+          voiceEngine.stop();
+          setView({ kind: 'simulacro-setup' });
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        onOpenTutoria={() => setGlobalTutorOpen(true)}
       />
 
       <main className="flex-1">
@@ -211,6 +217,7 @@ export function AcentoApp() {
                 setView({ kind: 'simulacro-setup' });
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
+              onOpenTutoria={() => setGlobalTutorOpen(true)}
               onStartMistakesReview={handleStartMistakesReview}
             />
             <TopicCatalog
@@ -232,10 +239,8 @@ export function AcentoApp() {
         {view.kind === 'guide' && (
           <MicroGuideView
             topic={view.topic}
-            progress={progress}
             onBack={() => setView({ kind: 'home' })}
             onSelectMode={(mode) => openTopicWithMode(view.topic, mode)}
-            onToggleSlow={handleToggleSlow}
           />
         )}
 
@@ -254,7 +259,6 @@ export function AcentoApp() {
                   : { kind: 'guide', topic: view.topic }
               )
             }
-            onToggleSlow={handleToggleSlow}
             onRecordAnswer={(topicSlug, questionId, isCorrect, xpEarned) =>
               setProgress((prev) =>
                 recordQuestionOutcome(
@@ -281,7 +285,6 @@ export function AcentoApp() {
             topic={view.topic}
             progress={progress}
             onBack={() => setView({ kind: 'guide', topic: view.topic })}
-            onToggleSlow={handleToggleSlow}
             onMarkMastered={(cardId) =>
               setProgress((prev) => {
                 if (prev.masteredFlashcardIds.includes(cardId)) return prev;
@@ -343,7 +346,7 @@ export function AcentoApp() {
       <footer className="border-t border-[#ECE5D8] bg-white/75 py-6 text-center text-xs text-[#64748B]">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-4 sm:flex-row sm:px-6">
           <p>
-            <strong className="text-[#1E293B]">Acento</strong> · Repasos y
+            <strong className="text-[#1E293B]">Accento</strong> · Repasos y
             simulacros de Inglés y Francés
           </p>
           <p>
@@ -360,12 +363,11 @@ export function AcentoApp() {
         </div>
       </footer>
 
-      <ProgressModal
-        isOpen={progressModalOpen}
-        progress={progress}
-        allTopics={ALL_TOPICS}
-        onClose={() => setProgressModalOpen(false)}
-        onResetProgress={() => setProgress(createInitialProgress())}
+      <TutorHelpDrawer
+        key={activeTutorTopic.slug}
+        isOpen={globalTutorOpen}
+        topic={activeTutorTopic}
+        onClose={() => setGlobalTutorOpen(false)}
       />
     </div>
   );

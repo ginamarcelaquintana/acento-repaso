@@ -11,24 +11,20 @@ import {
   Volume2,
   XCircle,
 } from 'lucide-react';
-import type { StudyMode, Topic, UserProgress } from '@/types/curriculum';
+import type { StudyMode, Topic } from '@/types/curriculum';
 import { voiceEngine } from '@/lib/voice-engine';
 import { TutorBubble } from './TutorBubble';
 
 interface MicroGuideViewProps {
   topic: Topic;
-  progress: UserProgress;
   onBack: () => void;
   onSelectMode: (mode: StudyMode) => void;
-  onToggleSlow: () => void;
 }
 
 export function MicroGuideView({
   topic,
-  progress,
   onBack,
   onSelectMode,
-  onToggleSlow,
 }: MicroGuideViewProps) {
   const [speakingText, setSpeakingText] = useState<string | null>(null);
   const isEn = topic.language === 'en';
@@ -38,20 +34,9 @@ export function MicroGuideView({
     voiceEngine.speak({
       text,
       mode: targetMode,
-      slow: progress.voiceSlow,
+      targetLang: topic.language,
       muted: false,
       onStart: () => setSpeakingText(text),
-      onEnd: () => setSpeakingText(null),
-    });
-  };
-
-  const speakIntro = () => {
-    voiceEngine.speak({
-      text: `Vamos a darle una mirada rápida a ${topic.titleEs}. Toca cualquier ejemplo para escucharlo clarito antes de empezar tu repaso.`,
-      mode: 'es-CO',
-      slow: progress.voiceSlow,
-      muted: false,
-      onStart: () => setSpeakingText('__intro__'),
       onEnd: () => setSpeakingText(null),
     });
   };
@@ -67,7 +52,6 @@ export function MicroGuideView({
         Volver al explorador
       </button>
 
-      {/* Topic Header */}
       <div className="rounded-3xl border border-[#ECE5D8] bg-white p-6 shadow-xs sm:p-8">
         <div className="flex flex-wrap items-center gap-2">
           <span
@@ -80,18 +64,12 @@ export function MicroGuideView({
             {isEn ? 'Inglés' : 'Francés'} ·{' '}
             {topic.level === 'A1' ? 'Nivel 1 (Primero)' : `Nivel ${topic.level}`}
           </span>
-          <span className="rounded-full bg-[#FAF7F2] px-3 py-1 text-xs font-semibold text-[#64748B]">
-            {topic.category}
-          </span>
         </div>
 
         <h1 className="font-display mt-3 text-2xl font-extrabold text-[#1E293B] sm:text-3xl">
           {topic.titleEs}
         </h1>
-        <p className="mt-1 text-sm font-semibold text-[#64748B]">
-          {topic.titleTarget}
-        </p>
-        <p className="mt-2.5 text-sm leading-relaxed text-[#475569]">
+        <p className="mt-2 text-sm leading-relaxed text-[#475569]">
           {topic.shortDescEs}
         </p>
 
@@ -115,7 +93,7 @@ export function MicroGuideView({
             className="inline-flex items-center gap-2 rounded-2xl border border-[#E6DEC8] bg-[#FAF7F2] px-4 py-3 text-sm font-bold text-[#1E293B] transition hover:bg-[#F1ECE2]"
           >
             <Layers className="h-4 w-4 text-[#D97706]" />
-            Tarjetas con Audio ({topic.flashcards.length})
+            Tarjetas ({topic.flashcards.length})
           </button>
 
           <button
@@ -131,16 +109,12 @@ export function MicroGuideView({
 
       <div className="mt-5">
         <TutorBubble
-          message="Esta es la micro-guía rápida. Escucha cada ejemplo tocando el botón de audio y luego arranca tu repaso."
+          message="Esta es la micro-guía rápida. Toca cualquier ejemplo para oírlo con pronunciación natural y luego arranca tu repaso."
           mood="neutral"
-          isSpeaking={speakingText === '__intro__'}
-          isSlow={progress.voiceSlow}
-          onReplay={speakIntro}
-          onToggleSlow={onToggleSlow}
+          isSpeaking={speakingText !== null}
         />
       </div>
 
-      {/* Micro-Guide Cards */}
       <div className="mt-5 space-y-4">
         {topic.microGuide.map((point, index) => (
           <div
@@ -208,7 +182,6 @@ export function MicroGuideView({
         ))}
       </div>
 
-      {/* Common Mistake Callout */}
       <div className="mt-5 rounded-3xl border border-[#F59E0B]/45 bg-[#FFFBEB] p-5 sm:p-6">
         <div className="flex items-center gap-2 text-[#B45309]">
           <AlertTriangle className="h-5 w-5" />
