@@ -194,9 +194,9 @@ export function HeroExplorer({
         <button
           type="button"
           onClick={() => onSelectTrack('en', 'A1')}
-          className="group overflow-hidden rounded-3xl border border-[#ECE5D8] bg-white text-left shadow-xs transition hover:-translate-y-0.5 hover:border-[#D94646]/45 hover:shadow-md active:translate-y-0"
+          className="group flex flex-col items-stretch overflow-hidden rounded-3xl border border-[#ECE5D8] bg-white text-left shadow-xs transition hover:-translate-y-0.5 hover:border-[#D94646]/45 hover:shadow-md active:translate-y-0"
         >
-          <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#FAF7F2]">
+          <div className="relative aspect-[16/9] w-full shrink-0 overflow-hidden bg-[#FAF7F2]">
             <img
               src="/images/track-english.jpg"
               alt="Ruta de Inglés A1 a B1"
@@ -206,7 +206,7 @@ export function HeroExplorer({
               Inglés · 16 temas
             </span>
           </div>
-          <div className="flex items-center justify-between gap-3 p-5">
+          <div className="flex flex-1 items-center justify-between gap-3 p-5">
             <h2 className="font-display text-lg font-extrabold text-[#1E293B]">
               Inglés (A1 → B1)
             </h2>
@@ -219,15 +219,15 @@ export function HeroExplorer({
         <button
           type="button"
           onClick={() => onSelectTrack('fr', 'A1')}
-          className="group overflow-hidden rounded-3xl border border-[#ECE5D8] bg-white text-left shadow-xs transition hover:-translate-y-0.5 hover:border-[#2563EB]/45 hover:shadow-md active:translate-y-0"
+          className="group flex flex-col items-stretch overflow-hidden rounded-3xl border border-[#ECE5D8] bg-white text-left shadow-xs transition hover:-translate-y-0.5 hover:border-[#2563EB]/45 hover:shadow-md active:translate-y-0"
         >
-          <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#FAF7F2]">
+          <div className="relative aspect-[16/9] w-full shrink-0 overflow-hidden bg-[#FAF7F2]">
             <FrenchTrackIllustration className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]" />
             <span className="absolute left-4 top-4 rounded-full bg-[#2563EB] px-3 py-1 text-xs font-bold text-white shadow-xs">
               Francés · 14 temas
             </span>
           </div>
-          <div className="flex items-center justify-between gap-3 p-5">
+          <div className="flex flex-1 items-center justify-between gap-3 p-5">
             <h2 className="font-display text-lg font-extrabold text-[#1E293B]">
               Francés (A1 → B1)
             </h2>
@@ -253,27 +253,29 @@ export function HeroExplorer({
                 key={topic.slug}
                 type="button"
                 onClick={() => onOpenTopic(topic, 'guide')}
-                className="group overflow-hidden rounded-3xl border border-[#ECE5D8] bg-white text-left shadow-xs transition hover:-translate-y-0.5 hover:border-[#CBD5E1] hover:shadow-md"
+                className="group flex flex-col items-stretch overflow-hidden rounded-3xl border border-[#ECE5D8] bg-white text-left shadow-xs transition hover:-translate-y-0.5 hover:border-[#CBD5E1] hover:shadow-md"
               >
-                <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#FAF7F2]">
+                <div className="relative aspect-[16/9] w-full shrink-0 overflow-hidden bg-[#FAF7F2]">
                   <TopicVisual
                     topic={topic}
                     className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
                   />
-                  <span
-                    className={`absolute left-3 top-3 rounded-full px-2.5 py-0.5 text-[11px] font-bold shadow-2xs ${
-                      isEn
-                        ? 'bg-[#D94646] text-white'
-                        : 'bg-[#2563EB] text-white'
-                    }`}
-                  >
-                    {isEn ? 'Inglés' : 'Francés'} · {topic.level}
-                  </span>
                 </div>
-                <div className="flex items-center justify-between gap-2.5 p-4">
-                  <h3 className="font-display text-sm font-extrabold leading-snug text-[#1E293B]">
-                    {topic.titleEs}
-                  </h3>
+                <div className="flex flex-1 items-center justify-between gap-2.5 p-4">
+                  <div className="min-w-0">
+                    <span
+                      className={`inline-block rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
+                        isEn
+                          ? 'bg-[#FEF2F2] text-[#D94646]'
+                          : 'bg-[#EFF6FF] text-[#2563EB]'
+                      }`}
+                    >
+                      {isEn ? 'Inglés' : 'Francés'} · {topic.level}
+                    </span>
+                    <h3 className="font-display mt-1.5 text-sm font-extrabold leading-snug text-[#1E293B]">
+                      {topic.titleEs}
+                    </h3>
+                  </div>
                   <ArrowRight className="h-4 w-4 shrink-0 text-[#94A3B8] transition group-hover:translate-x-0.5 group-hover:text-[#1E293B]" />
                 </div>
               </button>

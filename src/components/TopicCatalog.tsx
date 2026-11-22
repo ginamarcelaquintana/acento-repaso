@@ -180,24 +180,13 @@ export function TopicCatalog({
                       onOpenTopic(topic, 'guide');
                     }
                   }}
-                  className="group cursor-pointer overflow-hidden rounded-3xl border border-[#ECE5D8] bg-[#FAF7F2]/50 transition hover:-translate-y-0.5 hover:border-[#CBD5E1] hover:bg-white hover:shadow-md"
+                  className="group flex flex-col cursor-pointer overflow-hidden rounded-3xl border border-[#ECE5D8] bg-[#FAF7F2]/50 transition hover:-translate-y-0.5 hover:border-[#CBD5E1] hover:bg-white hover:shadow-md"
                 >
-                  <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#FAF7F2]">
+                  <div className="relative aspect-[16/9] w-full shrink-0 overflow-hidden bg-[#FAF7F2]">
                     <TopicVisual
                       topic={topic}
                       className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
                     />
-                    <span
-                      className={`absolute left-3 top-3 rounded-full px-2.5 py-0.5 text-[11px] font-bold shadow-2xs ${
-                        isEn
-                          ? 'bg-[#D94646] text-white'
-                          : 'bg-[#2563EB] text-white'
-                      }`}
-                    >
-                      {isEn ? 'Inglés' : 'Francés'} ·{' '}
-                      {topic.level === 'A1' ? 'Primero' : topic.level}
-                    </span>
-
                     <div className="absolute right-2.5 top-2.5 flex items-center gap-1">
                       <button
                         type="button"
@@ -231,9 +220,19 @@ export function TopicCatalog({
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between gap-2.5 p-4">
+                  <div className="flex flex-1 items-center justify-between gap-2.5 p-4">
                     <div className="min-w-0">
-                      <h3 className="font-display text-sm font-extrabold leading-snug text-[#1E293B] sm:text-[15px]">
+                      <span
+                        className={`inline-block rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
+                          isEn
+                            ? 'bg-[#FEF2F2] text-[#D94646]'
+                            : 'bg-[#EFF6FF] text-[#2563EB]'
+                        }`}
+                      >
+                        {isEn ? 'Inglés' : 'Francés'} ·{' '}
+                        {topic.level === 'A1' ? 'Primero' : topic.level}
+                      </span>
+                      <h3 className="font-display mt-1.5 text-sm font-extrabold leading-snug text-[#1E293B] sm:text-[15px]">
                         {topic.titleEs}
                       </h3>
                       {isCopied && (
