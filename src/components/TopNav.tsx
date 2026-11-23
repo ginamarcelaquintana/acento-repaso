@@ -3,6 +3,7 @@
 import React from 'react';
 import {
   ArrowLeft,
+  BookOpen,
   ClipboardCheck,
   GraduationCap,
   MessageCircle,
@@ -11,6 +12,7 @@ import {
 interface TopNavProps {
   fromEnglishTech: boolean;
   onGoHome: () => void;
+  onOpenTaller: () => void;
   onOpenSimulacro: () => void;
   onOpenTutoria: () => void;
 }
@@ -18,6 +20,7 @@ interface TopNavProps {
 export function TopNav({
   fromEnglishTech,
   onGoHome,
+  onOpenTaller,
   onOpenSimulacro,
   onOpenTutoria,
 }: TopNavProps) {
@@ -55,7 +58,16 @@ export function TopNav({
           )}
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={onOpenTaller}
+            className="inline-flex items-center gap-1.5 rounded-full border border-[#E6DEC8] bg-white px-3.5 py-2 text-xs font-bold text-[#1E293B] shadow-xs transition hover:border-[#2563EB]/45 hover:text-[#2563EB] active:translate-y-[1px]"
+          >
+            <BookOpen className="h-3.5 w-3.5 text-[#2563EB]" />
+            <span>Talleres</span>
+          </button>
+
           <button
             type="button"
             onClick={onOpenSimulacro}

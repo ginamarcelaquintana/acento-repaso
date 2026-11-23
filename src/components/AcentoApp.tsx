@@ -11,6 +11,7 @@ import type {
   Topic,
   UserProgress,
 } from '@/types/curriculum';
+import type { WorkshopSheetId } from '@/types/workshop';
 import {
   ALL_TOPICS,
   getNextTopic,
@@ -27,6 +28,7 @@ import {
 } from '@/lib/adaptive-engine';
 import { parseDeepLinkParams } from '@/lib/deep-link';
 import { voiceEngine } from '@/lib/voice-engine';
+import { CompoundAdjectivesWorkshop } from './CompoundAdjectivesWorkshop';
 import { FlashcardDeck } from './FlashcardDeck';
 import { HeroExplorer } from './HeroExplorer';
 import { MicroGuideView } from './MicroGuideView';
@@ -47,6 +49,7 @@ type ActiveView =
       customTitle?: string;
     }
   | { kind: 'tarjetas'; topic: Topic }
+  | { kind: 'taller'; initialSheet: WorkshopSheetId }
   | { kind: 'simulacro-setup'; preselectedTopic?: Topic }
   | { kind: 'simulacro-run'; config: SimulacroConfig };
 
@@ -75,6 +78,9 @@ export function AcentoApp() {
     }
     if (initialDeepLink.mode === 'simulacro') {
       return { kind: 'simulacro-setup' };
+    }
+    if (initialDeepLink.mode === 'taller') {
+      return { kind: 'taller', initialSheet: initialDeepLink.sheet ?? 'pdf1' };
     }
     return { kind: 'home' };
   });
@@ -195,6 +201,11 @@ export function AcentoApp() {
           setView({ kind: 'home' });
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
+        onOpenTaller={() => {
+          voiceEngine.stop();
+          setView({ kind: 'taller', initialSheet: 'pdf1' });
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
         onOpenSimulacro={() => {
           voiceEngine.stop();
           setView({ kind: 'simulacro-setup' });
@@ -213,6 +224,11 @@ export function AcentoApp() {
               onSearchChange={setSearchQuery}
               onSelectTrack={handleSelectTrack}
               onOpenTopic={openTopicWithMode}
+              onOpenTaller={(sheet) => {
+                voiceEngine.stop();
+                setView({ kind: 'taller', initialSheet: sheet });
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
               onOpenSimulacro={() => {
                 setView({ kind: 'simulacro-setup' });
                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -297,6 +313,19 @@ export function AcentoApp() {
               })
             }
             onStartRepaso={() => openTopicWithMode(view.topic, 'repaso')}
+          />
+        )}
+
+        {view.kind === 'taller' && (
+          <CompoundAdjectivesWorkshop
+            key={view.initialSheet}
+            initialSheet={view.initialSheet}
+            voiceMuted={progress.voiceMuted}
+            onBack={() => {
+              voiceEngine.stop();
+              setView({ kind: 'home' });
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
           />
         )}
 

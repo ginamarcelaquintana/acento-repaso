@@ -5,6 +5,7 @@ export interface ParsedDeepLink {
   level?: Level;
   topic?: string;
   mode?: StudyMode;
+  sheet?: 'pdf1' | 'pdf2';
   fromEnglishTech: boolean;
 }
 
@@ -13,6 +14,7 @@ export function parseDeepLinkParams(searchParams: URLSearchParams): ParsedDeepLi
   const rawLevel = searchParams.get('level')?.toUpperCase();
   const rawTopic = searchParams.get('topic') ?? undefined;
   const rawMode = searchParams.get('mode');
+  const rawSheet = searchParams.get('sheet');
   const fromParam = searchParams.get('from');
 
   const lang: Language | undefined =
@@ -27,15 +29,24 @@ export function parseDeepLinkParams(searchParams: URLSearchParams): ParsedDeepLi
     rawMode === 'guide' ||
     rawMode === 'repaso' ||
     rawMode === 'simulacro' ||
-    rawMode === 'tarjetas'
+    rawMode === 'tarjetas' ||
+    rawMode === 'taller'
       ? rawMode
       : undefined;
+
+  const sheet: 'pdf1' | 'pdf2' | undefined =
+    rawSheet === 'pdf2' || rawSheet === 'compound-adjectives-2'
+      ? 'pdf2'
+      : rawSheet === 'pdf1' || rawSheet === 'compound-adjectives-1'
+        ? 'pdf1'
+        : undefined;
 
   return {
     lang,
     level,
     topic: rawTopic,
     mode,
+    sheet,
     fromEnglishTech: fromParam === 'englishtech',
   };
 }
@@ -48,6 +59,21 @@ export function buildTopicLink(
   const params = new URLSearchParams();
   params.set('topic', topicSlug);
   params.set('mode', mode);
+  if (fromEnglishTech) {
+    params.set('from', 'englishtech');
+  }
+  const origin =
+    typeof window !== 'undefined' ? window.location.origin : '';
+  return `${origin}/?${params.toString()}`;
+}
+
+export function buildTallerLink(
+  sheet: 'pdf1' | 'pdf2' = 'pdf1',
+  fromEnglishTech = true
+): string {
+  const params = new URLSearchParams();
+  params.set('mode', 'taller');
+  params.set('sheet', sheet);
   if (fromEnglishTech) {
     params.set('from', 'englishtech');
   }

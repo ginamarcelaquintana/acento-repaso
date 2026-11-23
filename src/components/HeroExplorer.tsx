@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   AlertCircle,
   ArrowRight,
+  BookOpen,
   ClipboardCheck,
   MessageCircle,
   Search,
@@ -11,6 +12,7 @@ import {
   X,
 } from 'lucide-react';
 import type { Language, Level, StudyMode, Topic, UserProgress } from '@/types/curriculum';
+import type { WorkshopSheetId } from '@/types/workshop';
 import { searchTopics } from '@/data/curriculum';
 import { getRecommendedTopics } from '@/lib/adaptive-engine';
 import { FrenchTrackIllustration } from './EditorialIllustrations';
@@ -23,6 +25,7 @@ interface HeroExplorerProps {
   onSearchChange: (q: string) => void;
   onSelectTrack: (lang: Language, level?: Level) => void;
   onOpenTopic: (topic: Topic, mode: StudyMode) => void;
+  onOpenTaller: (sheet: WorkshopSheetId) => void;
   onOpenSimulacro: () => void;
   onOpenTutoria: () => void;
   onStartMistakesReview: () => void;
@@ -35,6 +38,7 @@ export function HeroExplorer({
   onSearchChange,
   onSelectTrack,
   onOpenTopic,
+  onOpenTaller,
   onOpenSimulacro,
   onOpenTutoria,
   onStartMistakesReview,
@@ -236,6 +240,40 @@ export function HeroExplorer({
             </span>
           </div>
         </button>
+      </div>
+
+      {/* Guided Compound Adjectives Workshop Spotlight (PDF 1 & PDF 2) */}
+      <div className="mt-6 flex flex-col justify-between gap-4 rounded-3xl border border-[#ECE5D8] bg-white p-5 shadow-xs sm:flex-row sm:items-center sm:p-6">
+        <div className="min-w-0">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#EFF6FF] px-2.5 py-0.5 text-[11px] font-bold text-[#2563EB]">
+            <BookOpen className="h-3.5 w-3.5" />
+            Taller guiado paso a paso · 87 fotos reales
+          </span>
+          <h2 className="font-display mt-1.5 text-lg font-extrabold text-[#1E293B]">
+            Compound Adjectives · Guías 1 y 2 completas
+          </h2>
+          <p className="mt-0.5 text-xs text-[#64748B]">
+            Pistas automáticas tras 30s de pausa, audio natural y espacio de retroalimentación en cada punto.
+          </p>
+        </div>
+        <div className="flex shrink-0 flex-wrap gap-2.5">
+          <button
+            type="button"
+            onClick={() => onOpenTaller('pdf1')}
+            className="inline-flex items-center gap-1.5 rounded-2xl bg-[#D94646] px-4 py-2.5 text-xs font-bold text-white shadow-xs transition hover:bg-[#C23939]"
+          >
+            <span>Guía 1 · Teach-This (47)</span>
+            <ArrowRight className="h-3.5 w-3.5" />
+          </button>
+          <button
+            type="button"
+            onClick={() => onOpenTaller('pdf2')}
+            className="inline-flex items-center gap-1.5 rounded-2xl bg-[#2563EB] px-4 py-2.5 text-xs font-bold text-white shadow-xs transition hover:bg-[#1D4ED8]"
+          >
+            <span>Guía 2 · EnglishClub (40)</span>
+            <ArrowRight className="h-3.5 w-3.5" />
+          </button>
+        </div>
       </div>
 
       {/* Visual-First Recommended Strip */}
