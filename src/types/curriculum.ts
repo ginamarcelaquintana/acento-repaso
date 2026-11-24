@@ -2,7 +2,13 @@ export type Language = 'en' | 'fr';
 
 export type Level = 'A1' | 'A2' | 'B1';
 
-export type StudyMode = 'guide' | 'repaso' | 'simulacro' | 'tarjetas' | 'taller';
+export type StudyMode =
+  | 'guide'
+  | 'repaso'
+  | 'simulacro'
+  | 'tarjetas'
+  | 'taller'
+  | 'hora';
 
 export type VoiceMode = 'es-CO' | 'en' | 'fr' | 'mixed-en' | 'mixed-fr';
 

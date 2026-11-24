@@ -5,6 +5,7 @@ import {
   ArrowLeft,
   BookOpen,
   ClipboardCheck,
+  Clock,
   GraduationCap,
   MessageCircle,
 } from 'lucide-react';
@@ -12,6 +13,7 @@ import {
 interface TopNavProps {
   fromEnglishTech: boolean;
   onGoHome: () => void;
+  onOpenHora: () => void;
   onOpenTaller: () => void;
   onOpenSimulacro: () => void;
   onOpenTutoria: () => void;
@@ -20,6 +22,7 @@ interface TopNavProps {
 export function TopNav({
   fromEnglishTech,
   onGoHome,
+  onOpenHora,
   onOpenTaller,
   onOpenSimulacro,
   onOpenTutoria,
@@ -58,7 +61,16 @@ export function TopNav({
           )}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={onOpenHora}
+            className="inline-flex items-center gap-1.5 rounded-full border border-[#10B981]/35 bg-[#ECFDF5] px-3.5 py-2 text-xs font-bold text-[#059669] shadow-xs transition hover:border-[#059669] hover:bg-white active:translate-y-[1px]"
+          >
+            <Clock className="h-3.5 w-3.5" />
+            <span>La Hora</span>
+          </button>
+
           <button
             type="button"
             onClick={onOpenTaller}

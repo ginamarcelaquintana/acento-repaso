@@ -25,14 +25,19 @@ export function parseDeepLinkParams(searchParams: URLSearchParams): ParsedDeepLi
       ? rawLevel
       : undefined;
 
-  const mode: StudyMode | undefined =
+  let mode: StudyMode | undefined =
     rawMode === 'guide' ||
     rawMode === 'repaso' ||
     rawMode === 'simulacro' ||
     rawMode === 'tarjetas' ||
-    rawMode === 'taller'
+    rawMode === 'taller' ||
+    rawMode === 'hora'
       ? rawMode
       : undefined;
+
+  if (rawSheet === 'hora' || rawSheet === 'telling-time') {
+    mode = 'hora';
+  }
 
   const sheet: 'pdf1' | 'pdf2' | undefined =
     rawSheet === 'pdf2' || rawSheet === 'compound-adjectives-2'
@@ -74,6 +79,17 @@ export function buildTallerLink(
   const params = new URLSearchParams();
   params.set('mode', 'taller');
   params.set('sheet', sheet);
+  if (fromEnglishTech) {
+    params.set('from', 'englishtech');
+  }
+  const origin =
+    typeof window !== 'undefined' ? window.location.origin : '';
+  return `${origin}/?${params.toString()}`;
+}
+
+export function buildTimeWorkshopLink(fromEnglishTech = true): string {
+  const params = new URLSearchParams();
+  params.set('mode', 'hora');
   if (fromEnglishTech) {
     params.set('from', 'englishtech');
   }

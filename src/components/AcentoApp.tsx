@@ -35,6 +35,7 @@ import { MicroGuideView } from './MicroGuideView';
 import { RepasoSession } from './RepasoSession';
 import { SimulacroSession, type SimulacroItem } from './SimulacroSession';
 import { SimulacroSetup } from './SimulacroSetup';
+import { TellingTimeWorkshop } from './TellingTimeWorkshop';
 import { TopNav } from './TopNav';
 import { TopicCatalog } from './TopicCatalog';
 import { TutorHelpDrawer } from './TutorHelpDrawer';
@@ -50,6 +51,7 @@ type ActiveView =
     }
   | { kind: 'tarjetas'; topic: Topic }
   | { kind: 'taller'; initialSheet: WorkshopSheetId }
+  | { kind: 'hora' }
   | { kind: 'simulacro-setup'; preselectedTopic?: Topic }
   | { kind: 'simulacro-run'; config: SimulacroConfig };
 
@@ -81,6 +83,9 @@ export function AcentoApp() {
     }
     if (initialDeepLink.mode === 'taller') {
       return { kind: 'taller', initialSheet: initialDeepLink.sheet ?? 'pdf1' };
+    }
+    if (initialDeepLink.mode === 'hora') {
+      return { kind: 'hora' };
     }
     return { kind: 'home' };
   });
@@ -118,6 +123,10 @@ export function AcentoApp() {
       setView({ kind: 'tarjetas', topic });
     } else if (mode === 'simulacro') {
       setView({ kind: 'simulacro-setup', preselectedTopic: topic });
+    } else if (mode === 'hora') {
+      setView({ kind: 'hora' });
+    } else if (mode === 'taller') {
+      setView({ kind: 'taller', initialSheet: 'pdf1' });
     } else {
       setView({ kind: 'guide', topic });
     }
@@ -201,6 +210,11 @@ export function AcentoApp() {
           setView({ kind: 'home' });
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
+        onOpenHora={() => {
+          voiceEngine.stop();
+          setView({ kind: 'hora' });
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
         onOpenTaller={() => {
           voiceEngine.stop();
           setView({ kind: 'taller', initialSheet: 'pdf1' });
@@ -224,6 +238,11 @@ export function AcentoApp() {
               onSearchChange={setSearchQuery}
               onSelectTrack={handleSelectTrack}
               onOpenTopic={openTopicWithMode}
+              onOpenHora={() => {
+                voiceEngine.stop();
+                setView({ kind: 'hora' });
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
               onOpenTaller={(sheet) => {
                 voiceEngine.stop();
                 setView({ kind: 'taller', initialSheet: sheet });
@@ -320,6 +339,17 @@ export function AcentoApp() {
           <CompoundAdjectivesWorkshop
             key={view.initialSheet}
             initialSheet={view.initialSheet}
+            voiceMuted={progress.voiceMuted}
+            onBack={() => {
+              voiceEngine.stop();
+              setView({ kind: 'home' });
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        )}
+
+        {view.kind === 'hora' && (
+          <TellingTimeWorkshop
             voiceMuted={progress.voiceMuted}
             onBack={() => {
               voiceEngine.stop();
