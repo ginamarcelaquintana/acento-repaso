@@ -317,11 +317,19 @@ export function ParticipePasseWorkshop({
         attempts: (prev.attempts ?? 0) + 1,
       }));
       const praise = praiseDeckRef.current.next();
-      speakCoach(
-        `${praise} ${exercise.feedbackEs}`,
-        'celebration',
-        exercise.spokenFrench
-      );
+      setTutorMessage(`${praise.display} ${exercise.feedbackEs}`);
+      setTutorMood('celebration');
+      setActiveClue(exercise.spokenFrench);
+      if (!voiceMuted) {
+        voiceEngine.speak({
+          text: `${praise.speakText} {fr:${exercise.spokenFrench}}`,
+          mode: 'mixed-fr',
+          targetLang: 'fr',
+          muted: false,
+          onStart: () => setIsSpeaking(true),
+          onEnd: () => setIsSpeaking(false),
+        });
+      }
     } else {
       const nextHint = Math.min(3, Math.max(1, hintLevel + 1)) as 1 | 2 | 3;
       const diagnostic = diagnoseFrenchParticipleMistake(rawAnswer, exercise);
