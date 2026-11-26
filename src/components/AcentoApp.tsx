@@ -32,6 +32,7 @@ import { CompoundAdjectivesWorkshop } from './CompoundAdjectivesWorkshop';
 import { FlashcardDeck } from './FlashcardDeck';
 import { HeroExplorer } from './HeroExplorer';
 import { MicroGuideView } from './MicroGuideView';
+import { ParticipePasseWorkshop } from './ParticipePasseWorkshop';
 import { RepasoSession } from './RepasoSession';
 import { SimulacroSession, type SimulacroItem } from './SimulacroSession';
 import { SimulacroSetup } from './SimulacroSetup';
@@ -52,6 +53,7 @@ type ActiveView =
   | { kind: 'tarjetas'; topic: Topic }
   | { kind: 'taller'; initialSheet: WorkshopSheetId }
   | { kind: 'hora' }
+  | { kind: 'participios' }
   | { kind: 'simulacro-setup'; preselectedTopic?: Topic }
   | { kind: 'simulacro-run'; config: SimulacroConfig };
 
@@ -86,6 +88,9 @@ export function AcentoApp() {
     }
     if (initialDeepLink.mode === 'hora') {
       return { kind: 'hora' };
+    }
+    if (initialDeepLink.mode === 'participios') {
+      return { kind: 'participios' };
     }
     return { kind: 'home' };
   });
@@ -125,6 +130,8 @@ export function AcentoApp() {
       setView({ kind: 'simulacro-setup', preselectedTopic: topic });
     } else if (mode === 'hora') {
       setView({ kind: 'hora' });
+    } else if (mode === 'participios') {
+      setView({ kind: 'participios' });
     } else if (mode === 'taller') {
       setView({ kind: 'taller', initialSheet: 'pdf1' });
     } else {
@@ -210,6 +217,11 @@ export function AcentoApp() {
           setView({ kind: 'home' });
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
+        onOpenParticipios={() => {
+          voiceEngine.stop();
+          setView({ kind: 'participios' });
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
         onOpenHora={() => {
           voiceEngine.stop();
           setView({ kind: 'hora' });
@@ -238,6 +250,11 @@ export function AcentoApp() {
               onSearchChange={setSearchQuery}
               onSelectTrack={handleSelectTrack}
               onOpenTopic={openTopicWithMode}
+              onOpenParticipios={() => {
+                voiceEngine.stop();
+                setView({ kind: 'participios' });
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
               onOpenHora={() => {
                 voiceEngine.stop();
                 setView({ kind: 'hora' });
@@ -350,6 +367,17 @@ export function AcentoApp() {
 
         {view.kind === 'hora' && (
           <TellingTimeWorkshop
+            voiceMuted={progress.voiceMuted}
+            onBack={() => {
+              voiceEngine.stop();
+              setView({ kind: 'home' });
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        )}
+
+        {view.kind === 'participios' && (
+          <ParticipePasseWorkshop
             voiceMuted={progress.voiceMuted}
             onBack={() => {
               voiceEngine.stop();

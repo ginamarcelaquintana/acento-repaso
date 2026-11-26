@@ -8,7 +8,8 @@ export type StudyMode =
   | 'simulacro'
   | 'tarjetas'
   | 'taller'
-  | 'hora';
+  | 'hora'
+  | 'participios';
 
 export type VoiceMode = 'es-CO' | 'en' | 'fr' | 'mixed-en' | 'mixed-fr';
 

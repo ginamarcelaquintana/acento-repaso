@@ -31,12 +31,23 @@ export function parseDeepLinkParams(searchParams: URLSearchParams): ParsedDeepLi
     rawMode === 'simulacro' ||
     rawMode === 'tarjetas' ||
     rawMode === 'taller' ||
-    rawMode === 'hora'
+    rawMode === 'hora' ||
+    rawMode === 'participios'
       ? rawMode
       : undefined;
 
+  if (rawMode === 'participe' || rawMode === 'participio') {
+    mode = 'participios';
+  }
+
   if (rawSheet === 'hora' || rawSheet === 'telling-time') {
     mode = 'hora';
+  } else if (
+    rawSheet === 'participios' ||
+    rawSheet === 'participe' ||
+    rawSheet === 'participe-passe'
+  ) {
+    mode = 'participios';
   }
 
   const sheet: 'pdf1' | 'pdf2' | undefined =
@@ -90,6 +101,17 @@ export function buildTallerLink(
 export function buildTimeWorkshopLink(fromEnglishTech = true): string {
   const params = new URLSearchParams();
   params.set('mode', 'hora');
+  if (fromEnglishTech) {
+    params.set('from', 'englishtech');
+  }
+  const origin =
+    typeof window !== 'undefined' ? window.location.origin : '';
+  return `${origin}/?${params.toString()}`;
+}
+
+export function buildParticipeWorkshopLink(fromEnglishTech = true): string {
+  const params = new URLSearchParams();
+  params.set('mode', 'participios');
   if (fromEnglishTech) {
     params.set('from', 'englishtech');
   }

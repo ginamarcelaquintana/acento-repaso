@@ -7,12 +7,14 @@ import {
   ClipboardCheck,
   Clock,
   GraduationCap,
+  Layers,
   MessageCircle,
 } from 'lucide-react';
 
 interface TopNavProps {
   fromEnglishTech: boolean;
   onGoHome: () => void;
+  onOpenParticipios: () => void;
   onOpenHora: () => void;
   onOpenTaller: () => void;
   onOpenSimulacro: () => void;
@@ -22,6 +24,7 @@ interface TopNavProps {
 export function TopNav({
   fromEnglishTech,
   onGoHome,
+  onOpenParticipios,
   onOpenHora,
   onOpenTaller,
   onOpenSimulacro,
@@ -62,6 +65,15 @@ export function TopNav({
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={onOpenParticipios}
+            className="inline-flex items-center gap-1.5 rounded-full border border-[#E63946]/30 bg-[#FEF2F2] px-3.5 py-2 text-xs font-bold text-[#E63946] shadow-xs transition hover:border-[#E63946] hover:bg-white active:translate-y-[1px]"
+          >
+            <Layers className="h-3.5 w-3.5" />
+            <span>Participios FR</span>
+          </button>
+
           <button
             type="button"
             onClick={onOpenHora}

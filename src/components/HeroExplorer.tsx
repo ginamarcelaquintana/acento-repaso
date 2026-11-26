@@ -7,6 +7,7 @@ import {
   BookOpen,
   ClipboardCheck,
   Clock,
+  Layers,
   MessageCircle,
   Search,
   Sparkles,
@@ -26,6 +27,7 @@ interface HeroExplorerProps {
   onSearchChange: (q: string) => void;
   onSelectTrack: (lang: Language, level?: Level) => void;
   onOpenTopic: (topic: Topic, mode: StudyMode) => void;
+  onOpenParticipios: () => void;
   onOpenHora: () => void;
   onOpenTaller: (sheet: WorkshopSheetId) => void;
   onOpenSimulacro: () => void;
@@ -40,6 +42,7 @@ export function HeroExplorer({
   onSearchChange,
   onSelectTrack,
   onOpenTopic,
+  onOpenParticipios,
   onOpenHora,
   onOpenTaller,
   onOpenSimulacro,
@@ -246,7 +249,33 @@ export function HeroExplorer({
       </div>
 
       {/* Guided Workshops Spotlight Grid */}
-      <div className="mt-6 grid gap-4 md:grid-cols-2">
+      <div className="mt-6 grid gap-4 md:grid-cols-3">
+        {/* Participe Passé · Francés A1 Workshop */}
+        <div className="flex flex-col justify-between gap-4 rounded-3xl border border-[#E63946]/30 bg-white p-5 shadow-xs sm:p-6">
+          <div>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FEF2F2] px-2.5 py-0.5 text-[11px] font-bold text-[#E63946]">
+              <Layers className="h-3.5 w-3.5" />
+              Francés A1 Universitario · 5 bloques (38 puntos)
+            </span>
+            <h2 className="font-display mt-1.5 text-lg font-extrabold text-[#1E293B]">
+              Le Participe Passé por Familias
+            </h2>
+            <p className="mt-0.5 text-xs text-[#64748B]">
+              Clasifica terminaciones, caza tildes y cedillas, escucha frases, completa contextos y deduce derivados con guía paso a paso.
+            </p>
+          </div>
+          <div>
+            <button
+              type="button"
+              onClick={onOpenParticipios}
+              className="inline-flex items-center gap-1.5 rounded-2xl bg-[#E63946] px-4 py-2.5 text-xs font-bold text-white shadow-xs transition hover:bg-[#D62839]"
+            >
+              <span>Practicar Participios</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        </div>
+
         {/* Telling the Time A1 University Workshop */}
         <div className="flex flex-col justify-between gap-4 rounded-3xl border border-[#10B981]/35 bg-white p-5 shadow-xs sm:p-6">
           <div>
